@@ -413,23 +413,29 @@ export function getPaymentReminderEmail(order: OrderDetails, paymentUrl: string)
 /**
  * 6. Admin Notification Email
  */
-export function getAdminNotificationEmail(order: OrderDetails, notificationType: 'new_order' | 'payment_received'): string {
+export function getAdminNotificationEmail(order: OrderDetails & { orderId?: string }, notificationType: 'new_order' | 'payment_received'): string {
   const content = `
     <div style="text-align: center; margin-bottom: 30px;">
-      <div style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 16px;">
-        ⚠️ Admin Alert
+      <div style="display: inline-block; background-color: #dc2626; color: white; padding: 14px 28px; border-radius: 50px; font-weight: 700; font-size: 18px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+        🚨 URGENT - NEW PAID ORDER
       </div>
     </div>
     
-    <h2 style="color: #111827; margin: 0 0 20px 0; font-size: 24px;">
-      ${notificationType === 'new_order' ? 'New Order Received' : 'Payment Received'}
+    <h2 style="color: #dc2626; margin: 0 0 10px 0; font-size: 28px; font-weight: 800;">
+      ${notificationType === 'new_order' ? 'Action Required: Process New Order' : 'Payment Confirmed - Process Order'}
     </h2>
     
-    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+    <p style="color: #111827; line-height: 1.6; margin-bottom: 15px; font-size: 17px; font-weight: 600;">
       ${notificationType === 'new_order' 
-        ? 'A new order has been placed and requires your attention.' 
-        : 'A payment has been received for an existing order.'}
+        ? '⏰ A customer has PAID for a new order. Please process within 1 hour to maintain swift service!' 
+        : '⏰ Payment confirmed. Process this order immediately!'}
     </p>
+    
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin-bottom: 25px; border-radius: 4px;">
+      <p style="color: #92400e; margin: 0; font-size: 15px; line-height: 1.6; font-weight: 600;">
+        ⚡ <strong>Swift Processing Required:</strong> Upload ticket and send email to customer within 1 hour for excellent service!
+      </p>
+    </div>
     
     <!-- Order Details -->
     <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
@@ -459,9 +465,18 @@ export function getAdminNotificationEmail(order: OrderDetails, notificationType:
     
     <!-- Action Button -->
     <div style="text-align: center; margin: 30px 0;">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/admin/orders/${order.orderNumber}" style="display: inline-block; background: linear-gradient(135deg, #2472e0 0%, #1e5bb8 100%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
-        View Order in Dashboard
+      <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/admin/orders/${order.orderId || order.orderNumber}" style="display: inline-block; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: white; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 18px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);">
+        🚀 Process Order Now
       </a>
+    </div>
+    
+    <div style="background-color: #eff6ff; border-left: 4px solid #2472e0; padding: 15px; margin-top: 25px; border-radius: 4px;">
+      <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.6;">
+        <strong>Quick Actions:</strong><br>
+        1. Upload ticket PDF<br>
+        2. Click "Send Email" to deliver to customer<br>
+        3. Mark as completed
+      </p>
     </div>
   `;
   

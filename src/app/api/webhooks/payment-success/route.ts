@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateOrderStatus } from '@/lib/db/orders';
 import { sendAndLogEmail } from '@/lib/email/service';
-import { getPaymentConfirmationEmail, getPaymentReceiptEmail } from '@/lib/email/templates';
+import { getPaymentConfirmationEmail, getPaymentReceiptEmail, getAdminNotificationEmail } from '@/lib/email/templates';
 import { createNotification } from '@/lib/notifications/service';
 import { createServiceClient } from '@/lib/supabase/server';
 
@@ -87,13 +87,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Send notification to admin
-    const adminEmail = process.env.ADMIN_EMAIL || 'abiolayoung229@gmail.com';
+    // 2. Send URGENT notification to admin for swift processing
+    const adminEmail = process.env.ADMIN_EMAIL || 'payment@dummair.com';
     await sendAndLogEmail(
       {
         to: adminEmail,
-        subject: `New Order Received - ${order.order_number}`,
-        html: getPaymentConfirmationEmail(orderDetails, true),
+        subject: `🚨 URGENT: New Paid Order ${order.order_number} - Action Required`,
+        html: getAdminNotificationEmail({ ...orderDetails, orderId: order.id }, 'new_order'),
       },
       {
         orderId: order.id,
@@ -102,6 +102,8 @@ export async function POST(request: NextRequest) {
         subject: `New Order Received - ${order.order_number}`,
       }
     );
+
+    console.log(`✅ URGENT admin notification sent to ${adminEmail} for order ${order.order_number}`);
 
     // 3. Create in-app notification for registered users
     if (order.user_id) {
