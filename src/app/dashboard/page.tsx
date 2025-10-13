@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Package, LogOut, User, CheckCircle, Clock, Download } from 'lucide-react';
+import { Package, LogOut, User, CheckCircle, Clock, Download, CreditCard, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface Order {
@@ -25,6 +25,9 @@ export default function DashboardPage() {
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -73,6 +76,47 @@ export default function DashboardPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/');
+  };
+
+  const handleRetryPayment = (order: Order) => {
+    setSelectedOrder(order);
+    setShowPaymentModal(true);
+  };
+
+  const processRetryPayment = async (provider: 'stripe' | 'flutterwave') => {
+    if (!selectedOrder) return;
+
+    setIsProcessingPayment(true);
+    try {
+      const response = await fetch('/api/retry-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId: selectedOrder.id,
+          provider,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to retry payment');
+      }
+
+      if (data.payment_url) {
+        // Redirect to payment gateway
+        window.location.href = data.payment_url;
+      } else {
+        throw new Error('No payment URL received');
+      }
+    } catch (error) {
+      console.error('Retry payment error:', error);
+      alert(error instanceof Error ? error.message : 'Failed to retry payment. Please try again.');
+      setIsProcessingPayment(false);
+      setShowPaymentModal(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -240,7 +284,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Download Button */}
+                  {/* Action Buttons */}
                   {order.status === 'completed' && order.ticket_url && (
                     <div className="mt-4 pt-4 border-t border-[#dce0e5]">
                       <a
@@ -255,12 +299,93 @@ export default function DashboardPage() {
                       </a>
                     </div>
                   )}
+                  
+                  {/* Retry Payment Button for Pending Orders */}
+                  {order.status === 'pending_payment' && (
+                    <div className="mt-4 pt-4 border-t border-[#dce0e5]">
+                      <button
+                        onClick={() => handleRetryPayment(order)}
+                        className="w-full flex items-center justify-center gap-2 bg-[#2472e0] text-white px-4 py-3 rounded-lg font-semibold hover:bg-[#1e5bb8] transition-all transform hover:scale-105"
+                      >
+                        <CreditCard size={18} />
+                        Complete Payment
+                      </button>
+                      <p className="text-xs text-[#647287] text-center mt-2">
+                        Click to retry payment for this order
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Payment Provider Selection Modal */}
+      {showPaymentModal && selectedOrder && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-[#111417] mb-2">
+              Complete Payment
+            </h3>
+            <p className="text-[#647287] mb-6">
+              Order: <span className="font-semibold text-[#111417]">{selectedOrder.order_number}</span>
+            </p>
+
+            <p className="text-sm text-[#647287] mb-4">
+              Select your preferred payment method to complete this order:
+            </p>
+
+            <div className="space-y-3 mb-6">
+              <button
+                onClick={() => processRetryPayment('stripe')}
+                disabled={isProcessingPayment}
+                className="w-full flex items-center justify-between p-4 border-2 border-[#dce0e5] rounded-xl hover:border-[#2472e0] hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <CreditCard className="text-[#2472e0]" size={24} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-[#111417]">Stripe</p>
+                    <p className="text-xs text-[#647287]">Credit/Debit Card</p>
+                  </div>
+                </div>
+                {isProcessingPayment && <RefreshCw className="animate-spin" size={20} />}
+              </button>
+
+              <button
+                onClick={() => processRetryPayment('flutterwave')}
+                disabled={isProcessingPayment}
+                className="w-full flex items-center justify-between p-4 border-2 border-[#dce0e5] rounded-xl hover:border-[#2472e0] hover:bg-blue-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <CreditCard className="text-orange-600" size={24} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-[#111417]">Flutterwave</p>
+                    <p className="text-xs text-[#647287]">Multiple payment options</p>
+                  </div>
+                </div>
+                {isProcessingPayment && <RefreshCw className="animate-spin" size={20} />}
+              </button>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowPaymentModal(false);
+                setSelectedOrder(null);
+              }}
+              disabled={isProcessingPayment}
+              className="w-full px-4 py-2 border border-[#dce0e5] text-[#647287] rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
