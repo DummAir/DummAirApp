@@ -89,7 +89,14 @@ export async function POST(request: NextRequest) {
 
     // 2. Send URGENT notification to admin for swift processing
     const adminEmail = process.env.ADMIN_EMAIL || 'payment@dummair.com';
-    await sendAndLogEmail(
+    
+    console.log('🔍 Admin Email Configuration:');
+    console.log('   ADMIN_EMAIL env var:', process.env.ADMIN_EMAIL);
+    console.log('   Sending to:', adminEmail);
+    console.log('   RESEND_API_KEY exists:', !!process.env.RESEND_API_KEY);
+    console.log('   RESEND_FROM_EMAIL:', process.env.RESEND_FROM_EMAIL);
+
+    const adminEmailResult = await sendAndLogEmail(
       {
         to: adminEmail,
         subject: `🚨 URGENT: New Paid Order ${order.order_number} - Action Required`,
@@ -103,7 +110,12 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log(`✅ URGENT admin notification sent to ${adminEmail} for order ${order.order_number}`);
+    if (adminEmailResult.success) {
+      console.log(`✅ URGENT admin notification sent to ${adminEmail} for order ${order.order_number}`);
+      console.log(`   Message ID: ${adminEmailResult.messageId}`);
+    } else {
+      console.error(`❌ Failed to send admin notification: ${adminEmailResult.error}`);
+    }
 
     // 3. Create in-app notification for registered users
     if (order.user_id) {

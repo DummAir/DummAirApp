@@ -20,12 +20,28 @@ export default function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const supabase = createClientComponentClient();
 
   useEffect(() => {
-    fetchNotifications();
-    
+    // Get current user and fetch notifications
+    const initializeNotifications = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        fetchNotifications(user.id);
+        setupRealtimeSubscription(user.id);
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    initializeNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setupRealtimeSubscription = (uid: string) => {
     // Set up real-time subscription
     const channel = supabase
       .channel('notifications')
@@ -35,9 +51,10 @@ export default function NotificationBell() {
           event: '*',
           schema: 'public',
           table: 'notifications',
+          filter: `user_id=eq.${uid}`,
         },
         () => {
-          fetchNotifications();
+          fetchNotifications(uid);
         }
       )
       .subscribe();
@@ -45,8 +62,7 @@ export default function NotificationBell() {
     return () => {
       supabase.removeChannel(channel);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -65,14 +81,16 @@ export default function NotificationBell() {
     };
   }, [isOpen]);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = async (uid: string) => {
     try {
-      const response = await fetch('/api/notifications');
+      const response = await fetch(`/api/notifications?userId=${uid}`);
       const data = await response.json();
 
       if (data.success) {
         setNotifications(data.notifications);
         setUnreadCount(data.unreadCount);
+      } else {
+        console.error('Failed to fetch notifications:', data.error);
       }
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
@@ -82,11 +100,13 @@ export default function NotificationBell() {
   };
 
   const markAsRead = async (notificationId: string) => {
+    if (!userId) return;
+
     try {
       await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificationId }),
+        body: JSON.stringify({ notificationId, userId }),
       });
 
       // Update local state
@@ -100,11 +120,13 @@ export default function NotificationBell() {
   };
 
   const markAllAsRead = async () => {
+    if (!userId) return;
+
     try {
       await fetch('/api/notifications', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ markAllAsRead: true }),
+        body: JSON.stringify({ markAllAsRead: true, userId }),
       });
 
       // Update local state

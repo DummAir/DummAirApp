@@ -1,41 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 
 /**
  * GET - Fetch user notifications
+ * Using service client with user_id from query parameter
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = await createServiceClient();
+    // Get user ID from query parameter (sent by client)
+    const searchParams = request.nextUrl.searchParams;
+    const userId = searchParams.get('userId');
     
-    // Get user from session
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('sb-access-token')?.value;
-    
-    if (!accessToken) {
+    if (!userId) {
       return NextResponse.json(
-        { error: 'Unauthorized - Please log in' },
-        { status: 401 }
+        { error: 'Missing userId parameter' },
+        { status: 400 }
       );
     }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    console.log(`📧 Fetching notifications for user: ${userId}`);
+
+    const supabase = await createServiceClient();
 
     // Fetch notifications for the user
     const { data: notifications, error: notificationsError } = await supabase
       .from('notifications')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
-      .limit(50); // Limit to last 50 notifications
+      .limit(50);
 
     if (notificationsError) {
       console.error('❌ Failed to fetch notifications:', notificationsError);
@@ -45,7 +38,7 @@ export async function GET() {
       );
     }
 
-    console.log(`✅ Fetched ${notifications?.length || 0} notifications for user ${user.id}`);
+    console.log(`✅ Fetched ${notifications?.length || 0} notifications for user ${userId}`);
 
     // Get unread count
     const unreadCount = notifications?.filter(n => !n.is_read).length || 0;
@@ -71,37 +64,24 @@ export async function GET() {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = await createServiceClient();
-    
-    // Get user from session
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get('sb-access-token')?.value;
-    
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
-    
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { notificationId, markAllAsRead } = body;
+    const { notificationId, markAllAsRead, userId } = body;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Missing userId' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = await createServiceClient();
 
     if (markAllAsRead) {
       // Mark all notifications as read
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .eq('is_read', false);
 
       if (error) {
@@ -111,6 +91,8 @@ export async function PATCH(request: NextRequest) {
           { status: 500 }
         );
       }
+
+      console.log(`✅ Marked all notifications as read for user ${userId}`);
 
       return NextResponse.json({
         success: true,
@@ -122,7 +104,7 @@ export async function PATCH(request: NextRequest) {
         .from('notifications')
         .update({ is_read: true })
         .eq('id', notificationId)
-        .eq('user_id', user.id);
+        .eq('user_id', userId);
 
       if (error) {
         console.error('❌ Failed to mark notification as read:', error);
@@ -131,6 +113,8 @@ export async function PATCH(request: NextRequest) {
           { status: 500 }
         );
       }
+
+      console.log(`✅ Marked notification ${notificationId} as read`);
 
       return NextResponse.json({
         success: true,
@@ -152,4 +136,3 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
-
