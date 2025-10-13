@@ -34,9 +34,30 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
     const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'support@dummair.com';
     const FROM_NAME = process.env.RESEND_FROM_NAME || 'DummAir Support';
 
+    console.log('📧 Email Service Configuration:');
+    console.log('   API Key:', RESEND_API_KEY ? `✅ SET (${RESEND_API_KEY.substring(0, 10)}...)` : '❌ NOT SET');
+    console.log('   From:', `${FROM_NAME} <${FROM_EMAIL}>`);
+    console.log('   To:', payload.to);
+    console.log('   Subject:', payload.subject);
+
     if (!RESEND_API_KEY) {
-      console.error('❌ RESEND_API_KEY not configured');
-      throw new Error('Email service not configured');
+      const error = 'RESEND_API_KEY not configured in environment variables';
+      console.error('❌', error);
+      return {
+        success: false,
+        error: error,
+      };
+    }
+
+    // Validate email address
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(payload.to)) {
+      const error = `Invalid email address: ${payload.to}`;
+      console.error('❌', error);
+      return {
+        success: false,
+        error: error,
+      };
     }
 
     // Prepare email data
@@ -58,9 +79,10 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
           ? Buffer.from(att.content).toString('base64')
           : att.content.toString('base64'),
       }));
+      console.log(`   Attachments: ${payload.attachments.length} file(s)`);
     }
 
-    console.log('📧 Sending email to:', payload.to);
+    console.log('🚀 Calling Resend API...');
 
     // Send via Resend API
     const response = await fetch('https://api.resend.com/emails', {
@@ -74,12 +96,25 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
 
     const data = await response.json();
 
+    console.log('📬 Resend Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      data: data,
+    });
+
     if (!response.ok) {
-      console.error('❌ Resend API error:', data);
-      throw new Error(data.message || 'Failed to send email');
+      const errorMsg = data.message || data.error || JSON.stringify(data);
+      console.error('❌ Resend API error:', errorMsg);
+      console.error('   Full response:', data);
+      return {
+        success: false,
+        error: errorMsg,
+      };
     }
 
-    console.log('✅ Email sent successfully:', data.id);
+    console.log('✅ Email sent successfully!');
+    console.log('   Message ID:', data.id);
+    console.log('   To:', payload.to);
 
     return {
       success: true,
@@ -87,10 +122,14 @@ export async function sendEmail(payload: EmailPayload): Promise<{ success: boole
     };
 
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+    console.error('❌ Email sending failed with exception:', error);
+    console.error('   Error type:', error instanceof Error ? error.constructor.name : typeof error);
+    console.error('   Error message:', error instanceof Error ? error.message : String(error));
+    console.error('   Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
   }
 }
