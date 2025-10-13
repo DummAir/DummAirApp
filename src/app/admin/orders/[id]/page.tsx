@@ -384,24 +384,22 @@ export default function AdminOrderDetailPage() {
               </button>
             )}
 
-            {/* Upload Ticket - ONLY for registered users (have dashboards to download) */}
-            {order.user_id && (
-              <label className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer ${
-                isUploading 
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                  : 'bg-[#2472e0] text-white hover:bg-[#1e5bb8]'
-              }`}>
-                <Upload size={20} />
-                {isUploading ? 'Uploading...' : 'Upload Ticket'}
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileUpload}
-                  disabled={isUploading}
-                  className="hidden"
-                />
-              </label>
-            )}
+            {/* Upload Ticket - Show for ALL orders */}
+            <label className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors cursor-pointer ${
+              isUploading 
+                ? 'bg-gray-400 text-white cursor-not-allowed'
+                : 'bg-[#2472e0] text-white hover:bg-[#1e5bb8]'
+            }`}>
+              <Upload size={20} />
+              {isUploading ? 'Uploading...' : order.ticket_url ? 'Replace Ticket' : 'Upload Ticket'}
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileUpload}
+                disabled={isUploading}
+                className="hidden"
+              />
+            </label>
 
             {/* Send Email - Show for all orders */}
             <button
@@ -418,15 +416,37 @@ export default function AdminOrderDetailPage() {
             </button>
           </div>
 
-          {/* Info message for guest orders */}
-          {!order.user_id && (
-            <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-[#111417]">
-                <strong>Guest Order:</strong> This customer doesn&apos;t have an account. 
-                Ticket will be sent via email only. Upload feature is not available for guest orders.
-              </p>
-            </div>
-          )}
+          {/* Ticket Status & Info */}
+          <div className="mt-4 space-y-3">
+            {/* Ticket Upload Status */}
+            {order.ticket_url && (
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  <strong>✓ Ticket Uploaded:</strong> Ticket will be automatically attached when you send the email.
+                </p>
+              </div>
+            )}
+
+            {/* Info message for guest orders */}
+            {!order.user_id && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-[#111417]">
+                  <strong>📧 Guest Order:</strong> This customer doesn&apos;t have an account. 
+                  When you upload a ticket and click &quot;Send Email&quot;, the ticket PDF will be automatically attached to the email.
+                </p>
+              </div>
+            )}
+
+            {/* Info message for registered users */}
+            {order.user_id && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-[#111417]">
+                  <strong>👤 Registered User:</strong> When you upload a ticket, the customer will receive an email notification 
+                  and can download it from their dashboard. The ticket will also be attached when you send the email.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
