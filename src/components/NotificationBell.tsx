@@ -157,90 +157,99 @@ export default function NotificationBell() {
       {/* Bell Icon Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
+        className="relative p-1.5 md:p-2 hover:bg-gray-100 rounded-full transition-colors"
         aria-label="Notifications"
       >
-        <Bell size={24} className="text-[#647287]" />
+        <Bell size={20} className="text-[#647287] md:w-6 md:h-6" />
         
         {/* Unread Badge */}
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 md:top-0 md:right-0 min-w-[18px] h-[18px] md:min-w-[20px] md:h-5 bg-red-500 text-white text-[10px] md:text-xs font-bold rounded-full flex items-center justify-center px-1">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
-      {/* Dropdown Panel */}
+      {/* Dropdown Panel - Responsive */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[600px] flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-[#111417]">Notifications</h3>
-            <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-[#2472e0] hover:underline font-medium"
-                >
-                  Mark all read
-                </button>
-              )}
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <X size={18} className="text-[#647287]" />
-              </button>
-            </div>
-          </div>
-
-          {/* Notifications List */}
-          <div className="overflow-y-auto flex-1">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center">
-                <Bell size={48} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-[#647287]">No notifications yet</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                      !notification.is_read ? 'bg-blue-50/50' : ''
-                    }`}
+        <>
+          {/* Mobile: Full Screen Overlay */}
+          <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsOpen(false)}></div>
+          
+          {/* Notification Panel */}
+          <div className="fixed inset-x-0 bottom-0 md:absolute md:right-0 md:top-auto md:bottom-auto md:left-auto md:inset-x-auto mt-0 md:mt-2 w-full md:w-96 bg-white rounded-t-3xl md:rounded-lg shadow-2xl border-t md:border border-gray-200 z-50 max-h-[85vh] md:max-h-[600px] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 md:p-4 border-b border-gray-200 flex-shrink-0">
+              {/* Mobile: Add drag indicator */}
+              <div className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full"></div>
+              
+              <h3 className="text-base md:text-lg font-semibold text-[#111417] mt-3 md:mt-0">Notifications</h3>
+              <div className="flex items-center gap-2 mt-3 md:mt-0">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    className="text-xs text-[#2472e0] hover:underline font-medium whitespace-nowrap"
                   >
-                    {notification.action_url ? (
-                      <Link
-                        href={notification.action_url}
-                        onClick={() => handleNotificationClick(notification)}
-                        className="block"
-                      >
-                        <NotificationContent notification={notification} />
-                      </Link>
-                    ) : (
-                      <div onClick={() => handleNotificationClick(notification)}>
-                        <NotificationContent notification={notification} />
-                      </div>
-                    )}
-                  </div>
-                ))}
+                    Mark all read
+                  </button>
+                )}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <X size={18} className="text-[#647287]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Notifications List */}
+            <div className="overflow-y-auto flex-1">
+              {notifications.length === 0 ? (
+                <div className="p-8 md:p-8 text-center">
+                  <Bell size={40} className="mx-auto text-gray-300 mb-3 md:w-12 md:h-12" />
+                  <p className="text-[#647287] text-sm md:text-base">No notifications yet</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`p-3 md:p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                        !notification.is_read ? 'bg-blue-50/50' : ''
+                      }`}
+                    >
+                      {notification.action_url ? (
+                        <Link
+                          href={notification.action_url}
+                          onClick={() => handleNotificationClick(notification)}
+                          className="block"
+                        >
+                          <NotificationContent notification={notification} />
+                        </Link>
+                      ) : (
+                        <div onClick={() => handleNotificationClick(notification)}>
+                          <NotificationContent notification={notification} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {notifications.length > 0 && (
+              <div className="p-3 md:p-3 border-t border-gray-200 text-center flex-shrink-0">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="text-sm text-[#2472e0] hover:underline font-medium"
+                >
+                  Close
+                </button>
               </div>
             )}
           </div>
-
-          {/* Footer */}
-          {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-200 text-center">
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-sm text-[#2472e0] hover:underline font-medium"
-              >
-                Close
-              </button>
-            </div>
-          )}
-        </div>
+        </>
       )}
     </div>
   );
@@ -276,23 +285,23 @@ function NotificationContent({ notification }: { notification: Notification }) {
   };
 
   return (
-    <div className="flex items-start gap-3">
-      <div className="text-2xl flex-shrink-0">
+    <div className="flex items-start gap-2 md:gap-3">
+      <div className="text-xl md:text-2xl flex-shrink-0">
         {getNotificationIcon(notification.type)}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <p className="font-semibold text-[#111417] text-sm">
+          <p className="font-semibold text-[#111417] text-sm md:text-sm leading-tight">
             {notification.title}
           </p>
           {!notification.is_read && (
             <div className="w-2 h-2 bg-[#2472e0] rounded-full flex-shrink-0 mt-1"></div>
           )}
         </div>
-        <p className="text-[#647287] text-sm mb-1 line-clamp-2">
+        <p className="text-[#647287] text-xs md:text-sm mb-1 line-clamp-2 leading-relaxed">
           {notification.message}
         </p>
-        <p className="text-xs text-[#9ca3af]">
+        <p className="text-[10px] md:text-xs text-[#9ca3af]">
           {formatTime(notification.created_at)}
         </p>
       </div>
