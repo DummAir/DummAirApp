@@ -1,0 +1,13 @@
+# Vercel ignore file
+node_modules
+.env.local
+.env
+*.log
+.DS_Store
+.vscode
+.idea
+*.sql
+backend-todos.json
+PRD.json
+
+

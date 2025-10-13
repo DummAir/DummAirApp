@@ -1,0 +1,769 @@
+{
+  "project": "DummAir Backend Integration",
+  "created": "2025-10-09",
+  "status": "In Progress",
+  "overview": {
+    "total_tasks": 45,
+    "completed": 8,
+    "in_progress": 2,
+    "pending": 35,
+    "categories": [
+      "Authentication",
+      "Database Setup",
+      "Payment Integration",
+      "Email Service",
+      "File Storage",
+      "API Endpoints",
+      "Webhooks",
+      "Admin Features",
+      "Security",
+      "Testing"
+    ]
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "category": "Authentication",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Set up Supabase project",
+      "subtasks": [
+        "Create Supabase account",
+        "Create new project",
+        "Get project URL and anon key",
+        "Configure authentication settings",
+        "Enable email/password auth"
+      ],
+      "dependencies": [],
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": 2,
+      "category": "Authentication",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Install and configure BetterAuth",
+      "subtasks": [
+        "Install better-auth package",
+        "Create auth configuration file",
+        "Set up auth API routes",
+        "Configure Supabase as database adapter",
+        "Set up session management"
+      ],
+      "dependencies": [1],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 3,
+      "category": "Authentication",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Implement user registration flow",
+      "subtasks": [
+        "Create signup API endpoint",
+        "Create signup page/component",
+        "Add email verification",
+        "Handle registration errors",
+        "Redirect after successful signup"
+      ],
+      "dependencies": [2],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 4,
+      "category": "Authentication",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Implement user login flow",
+      "subtasks": [
+        "Create login API endpoint",
+        "Create login page/component",
+        "Handle authentication errors",
+        "Set up session cookies",
+        "Implement remember me functionality",
+        "Add password reset flow"
+      ],
+      "dependencies": [2],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 5,
+      "category": "Authentication",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement admin authentication",
+      "subtasks": [
+        "Create admin role in database",
+        "Add role-based access control",
+        "Create admin login page",
+        "Protect admin routes with middleware",
+        "Add admin session management"
+      ],
+      "dependencies": [3, 4],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 6,
+      "category": "Authentication",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Add social authentication (Optional)",
+      "subtasks": [
+        "Configure Google OAuth",
+        "Configure Facebook OAuth",
+        "Add social login buttons",
+        "Handle OAuth callbacks"
+      ],
+      "dependencies": [4],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 7,
+      "category": "Database Setup",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Design and create database schema",
+      "subtasks": [
+        "Design users table schema",
+        "Design orders table schema",
+        "Design passengers table schema",
+        "Design payments table schema",
+        "Design tickets table schema",
+        "Create database migrations",
+        "Set up relationships and foreign keys"
+      ],
+      "dependencies": [1],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 8,
+      "category": "Database Setup",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Set up Supabase database",
+      "subtasks": [
+        "Run SQL migrations in Supabase",
+        "Create all tables",
+        "Set up indexes for performance",
+        "Configure Row Level Security (RLS) policies",
+        "Test database connections"
+      ],
+      "dependencies": [7],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 9,
+      "category": "Database Setup",
+      "priority": "High",
+      "status": "pending",
+      "task": "Create database client and helpers",
+      "subtasks": [
+        "Install Supabase client library",
+        "Create Supabase client instance",
+        "Create database helper functions",
+        "Add TypeScript types for all tables",
+        "Create query builders"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 10,
+      "category": "Payment Integration",
+      "priority": "Critical",
+      "status": "completed",
+      "task": "Fix Stripe payment integration",
+      "subtasks": [
+        "Create Stripe client",
+        "Implement checkout session creation",
+        "Add success/cancel URLs",
+        "Test with test cards"
+      ],
+      "dependencies": [],
+      "estimatedTime": "Done"
+    },
+    {
+      "id": 11,
+      "category": "Payment Integration",
+      "priority": "Critical",
+      "status": "in_progress",
+      "task": "Fix Paystack payment integration",
+      "subtasks": [
+        "Fix API endpoint format",
+        "Correct currency configuration (NGN)",
+        "Fix amount conversion",
+        "Test transaction initialization",
+        "Verify redirect URLs"
+      ],
+      "dependencies": [],
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": 12,
+      "category": "Payment Integration",
+      "priority": "Critical",
+      "status": "in_progress",
+      "task": "Fix Flutterwave payment integration",
+      "subtasks": [
+        "Fix transaction reference generation",
+        "Correct request body format",
+        "Fix amount format (string)",
+        "Test payment link generation",
+        "Verify redirect URLs"
+      ],
+      "dependencies": [],
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": 13,
+      "category": "Payment Integration",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement payment webhooks for all providers",
+      "subtasks": [
+        "Create Stripe webhook handler with signature verification",
+        "Create Paystack webhook handler",
+        "Create Flutterwave webhook handler",
+        "Update order status on payment success",
+        "Handle payment failures",
+        "Send admin notifications"
+      ],
+      "dependencies": [10, 11, 12, 8],
+      "estimatedTime": "3 hours"
+    },
+    {
+      "id": 14,
+      "category": "Payment Integration",
+      "priority": "High",
+      "status": "pending",
+      "task": "Store payment records in database",
+      "subtasks": [
+        "Create payment records on initialization",
+        "Update payment status from webhooks",
+        "Link payments to orders",
+        "Store transaction IDs and references",
+        "Handle refunds (future)"
+      ],
+      "dependencies": [8, 13],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 15,
+      "category": "Email Service",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Set up SendGrid email service",
+      "subtasks": [
+        "Create SendGrid account",
+        "Get API key",
+        "Verify sender email",
+        "Configure email templates",
+        "Test email sending"
+      ],
+      "dependencies": [],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 16,
+      "category": "Email Service",
+      "priority": "High",
+      "status": "pending",
+      "task": "Create email templates",
+      "subtasks": [
+        "Design payment confirmation email",
+        "Design ticket delivery email",
+        "Design admin notification email",
+        "Design password reset email",
+        "Design welcome email",
+        "Add dynamic data placeholders"
+      ],
+      "dependencies": [15],
+      "estimatedTime": "3 hours"
+    },
+    {
+      "id": 17,
+      "category": "Email Service",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement email sending functions",
+      "subtasks": [
+        "Create sendPaymentConfirmation function",
+        "Create sendTicketDelivery function",
+        "Create sendAdminNotification function",
+        "Create sendPasswordReset function",
+        "Add email queue system (optional)",
+        "Handle email errors gracefully"
+      ],
+      "dependencies": [16],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 18,
+      "category": "Email Service",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement resend email functionality",
+      "subtasks": [
+        "Update /api/resend-email route",
+        "Retrieve order from database",
+        "Check order status",
+        "Send appropriate email",
+        "Log resend activity"
+      ],
+      "dependencies": [17, 8],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 19,
+      "category": "File Storage",
+      "priority": "High",
+      "status": "pending",
+      "task": "Set up file storage for tickets",
+      "subtasks": [
+        "Create Supabase Storage bucket",
+        "Configure bucket permissions",
+        "Set up upload API",
+        "Generate secure URLs",
+        "Implement file deletion (optional)"
+      ],
+      "dependencies": [1],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 20,
+      "category": "File Storage",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement ticket PDF upload",
+      "subtasks": [
+        "Create upload endpoint",
+        "Add file validation (PDF only)",
+        "Store file URL in database",
+        "Link to order record",
+        "Generate download links"
+      ],
+      "dependencies": [19, 8],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 21,
+      "category": "API Endpoints",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Implement order creation with database",
+      "subtasks": [
+        "Update /api/orders to save to Supabase",
+        "Validate order data",
+        "Generate unique order numbers",
+        "Store all passenger details",
+        "Return order ID and number",
+        "Handle creation errors"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 22,
+      "category": "API Endpoints",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement order retrieval endpoints",
+      "subtasks": [
+        "GET /api/orders - List all orders (admin)",
+        "GET /api/orders/[id] - Get single order",
+        "Add filtering by status",
+        "Add pagination",
+        "Add sorting options",
+        "Protect with authentication"
+      ],
+      "dependencies": [8, 5],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 23,
+      "category": "API Endpoints",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement user orders endpoint",
+      "subtasks": [
+        "GET /api/user/orders - User's own orders",
+        "Filter by user ID",
+        "Show order history",
+        "Add order details",
+        "Protect with user authentication"
+      ],
+      "dependencies": [8, 4],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 24,
+      "category": "API Endpoints",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement admin mark completed",
+      "subtasks": [
+        "Update /api/admin/mark-completed",
+        "Update order status in database",
+        "Store ticket URL",
+        "Send ticket email",
+        "Add admin notes field",
+        "Protect with admin auth"
+      ],
+      "dependencies": [8, 5, 17, 20],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 25,
+      "category": "Admin Features",
+      "priority": "High",
+      "status": "pending",
+      "task": "Connect admin dashboard to database",
+      "subtasks": [
+        "Fetch real orders from Supabase",
+        "Display order list with status",
+        "Implement filtering (pending/paid/completed)",
+        "Add search functionality",
+        "Show real-time updates"
+      ],
+      "dependencies": [22, 5],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 26,
+      "category": "Admin Features",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement order details page",
+      "subtasks": [
+        "Fetch complete order data",
+        "Display all passenger information",
+        "Show payment details",
+        "Add ticket upload interface",
+        "Enable status updates"
+      ],
+      "dependencies": [22, 20],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 27,
+      "category": "Admin Features",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement admin analytics",
+      "subtasks": [
+        "Total orders count",
+        "Revenue calculation",
+        "Orders by status chart",
+        "Orders by payment provider",
+        "Daily/weekly stats"
+      ],
+      "dependencies": [25],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 28,
+      "category": "Security",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Implement API route protection",
+      "subtasks": [
+        "Create auth middleware",
+        "Protect admin routes",
+        "Protect user routes",
+        "Validate JWT tokens",
+        "Handle unauthorized access"
+      ],
+      "dependencies": [2],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 29,
+      "category": "Security",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Set up Row Level Security (RLS) in Supabase",
+      "subtasks": [
+        "Enable RLS on all tables",
+        "Create policies for users table",
+        "Create policies for orders table",
+        "Create policies for payments table",
+        "Create admin access policies",
+        "Test security rules"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 30,
+      "category": "Security",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement rate limiting",
+      "subtasks": [
+        "Add rate limiting middleware",
+        "Limit payment attempts",
+        "Limit email sending",
+        "Prevent spam bookings",
+        "Add IP-based throttling"
+      ],
+      "dependencies": [],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 31,
+      "category": "Security",
+      "priority": "High",
+      "status": "pending",
+      "task": "Secure webhook endpoints",
+      "subtasks": [
+        "Verify Stripe signatures",
+        "Verify Paystack signatures",
+        "Verify Flutterwave signatures",
+        "Validate webhook payloads",
+        "Prevent replay attacks"
+      ],
+      "dependencies": [13],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 32,
+      "category": "Database Setup",
+      "priority": "High",
+      "status": "pending",
+      "task": "Create database indexes",
+      "subtasks": [
+        "Index orders by user_id",
+        "Index orders by status",
+        "Index orders by created_at",
+        "Index payments by order_id",
+        "Test query performance"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": 33,
+      "category": "Database Setup",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement database backups",
+      "subtasks": [
+        "Configure Supabase backups",
+        "Set backup frequency",
+        "Test restore process"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "30 minutes"
+    },
+    {
+      "id": 34,
+      "category": "API Endpoints",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement user profile endpoints",
+      "subtasks": [
+        "GET /api/user/profile",
+        "PUT /api/user/profile",
+        "Add saved passenger details",
+        "Add preferences",
+        "Protect with auth"
+      ],
+      "dependencies": [8, 4],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 35,
+      "category": "API Endpoints",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Implement saved travelers feature",
+      "subtasks": [
+        "Create travelers table",
+        "POST /api/user/travelers - Add traveler",
+        "GET /api/user/travelers - List travelers",
+        "DELETE /api/user/travelers/[id]",
+        "Auto-fill passenger forms"
+      ],
+      "dependencies": [8, 4],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 36,
+      "category": "Webhooks",
+      "priority": "Critical",
+      "status": "pending",
+      "task": "Implement Stripe webhook handler",
+      "subtasks": [
+        "Verify webhook signature",
+        "Handle checkout.session.completed",
+        "Handle payment_intent.succeeded",
+        "Handle payment_intent.failed",
+        "Update order status",
+        "Send admin notification",
+        "Log all webhook events"
+      ],
+      "dependencies": [13, 8, 17],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 37,
+      "category": "Webhooks",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement Paystack webhook handler",
+      "subtasks": [
+        "Verify webhook signature",
+        "Handle charge.success event",
+        "Handle charge.failed event",
+        "Update order status",
+        "Send notifications",
+        "Log events"
+      ],
+      "dependencies": [13, 8, 17],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 38,
+      "category": "Webhooks",
+      "priority": "High",
+      "status": "pending",
+      "task": "Implement Flutterwave webhook handler",
+      "subtasks": [
+        "Verify webhook signature",
+        "Handle charge.completed event",
+        "Handle charge.failed event",
+        "Update order status",
+        "Send notifications",
+        "Log events"
+      ],
+      "dependencies": [13, 8, 17],
+      "estimatedTime": "1.5 hours"
+    },
+    {
+      "id": 39,
+      "category": "Testing",
+      "priority": "High",
+      "status": "pending",
+      "task": "Test complete booking flow",
+      "subtasks": [
+        "Test guest checkout",
+        "Test authenticated checkout",
+        "Test all payment providers",
+        "Test email delivery",
+        "Test webhook processing",
+        "Test admin workflow"
+      ],
+      "dependencies": [36, 37, 38, 17, 24],
+      "estimatedTime": "3 hours"
+    },
+    {
+      "id": 40,
+      "category": "Testing",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Test error scenarios",
+      "subtasks": [
+        "Test payment failures",
+        "Test network errors",
+        "Test invalid data",
+        "Test concurrent bookings",
+        "Test edge cases"
+      ],
+      "dependencies": [39],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 41,
+      "category": "Optimization",
+      "priority": "Low",
+      "status": "pending",
+      "task": "Implement caching",
+      "subtasks": [
+        "Cache country list",
+        "Cache user sessions",
+        "Add Redis for caching (optional)",
+        "Optimize database queries"
+      ],
+      "dependencies": [8],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 42,
+      "category": "Monitoring",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Add error tracking",
+      "subtasks": [
+        "Set up Sentry or similar",
+        "Track payment errors",
+        "Track API errors",
+        "Set up alerts"
+      ],
+      "dependencies": [],
+      "estimatedTime": "1 hour"
+    },
+    {
+      "id": 43,
+      "category": "Documentation",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Create API documentation",
+      "subtasks": [
+        "Document all endpoints",
+        "Add request/response examples",
+        "Document authentication",
+        "Add error codes",
+        "Create Postman collection"
+      ],
+      "dependencies": [21, 22, 23, 24],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 44,
+      "category": "Deployment",
+      "priority": "High",
+      "status": "pending",
+      "task": "Prepare for production deployment",
+      "subtasks": [
+        "Set up environment variables on Vercel",
+        "Configure domain",
+        "Set up SSL",
+        "Configure webhook endpoints",
+        "Test production build"
+      ],
+      "dependencies": [39],
+      "estimatedTime": "2 hours"
+    },
+    {
+      "id": 45,
+      "category": "Deployment",
+      "priority": "Medium",
+      "status": "pending",
+      "task": "Set up monitoring and logging",
+      "subtasks": [
+        "Configure Vercel analytics",
+        "Set up custom logging",
+        "Monitor payment success rates",
+        "Track user signups",
+        "Monitor email delivery"
+      ],
+      "dependencies": [44],
+      "estimatedTime": "1 hour"
+    }
+  ],
+  "implementation_order": [
+    "Phase 1: Authentication & Database (Tasks 1-9)",
+    "Phase 2: Payment Integration (Tasks 10-14)",
+    "Phase 3: Email Service (Tasks 15-18)",
+    "Phase 4: File Storage (Tasks 19-20)",
+    "Phase 5: API Endpoints (Tasks 21-24)",
+    "Phase 6: Admin Features (Tasks 25-27)",
+    "Phase 7: Webhooks (Tasks 36-38)",
+    "Phase 8: Security (Tasks 28-31)",
+    "Phase 9: Testing (Tasks 39-40)",
+    "Phase 10: Optimization & Deployment (Tasks 41-45)"
+  ],
+  "critical_path": [1, 2, 7, 8, 9, 21, 10, 11, 12, 13, 15, 17, 36, 37, 38, 28, 29, 39],
+  "estimated_total_time": "50-60 hours"
+}
+

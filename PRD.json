@@ -1,0 +1,251 @@
+{
+  "project": {
+    "name": "DummAir",
+    "description": "A web and mobile flight booking app for generating verifiable dummy flight tickets. Users can create one-way or return dummy bookings, pay online, and receive their manually verified ticket within 1 hour. Admins get notified and send the ticket via email.",
+    "reference_ui": "Google Stitch UI (Figma export attached to Cursor)",
+    "frontend_framework": "Next.js 14 (App Router)",
+    "backend_stack": "Node.js (API Routes in Next.js) + Firebase Firestore + SendGrid + Stripe/Paystack/Flutterwave"
+  },
+
+  "frontend": {
+    "goal": "Transform the Google Stitch UI into a fully functional, responsive Next.js app with booking flow, payment options, confirmation screen, and WhatsApp support.",
+    "tech_stack": {
+      "framework": "Next.js 14 (TypeScript)",
+      "ui_library": "Tailwind CSS",
+      "state_management": "React Context or Zustand",
+      "form_handling": "React Hook Form + Yup validation",
+      "routing": "Next.js App Router",
+      "api_integration": "Native fetch() to backend routes (server actions)",
+      "deployment_target": "Vercel"
+    },
+    "key_pages": [
+      {
+        "page": "Landing Page",
+        "route": "/",
+        "features": [
+          "Hero section with CTA: 'Book a Verifiable Dummy Flight Ticket'",
+          "Short description: 'For visa applications, proof of travel, or documentation'",
+          "Primary button: 'Start Booking'",
+          "Floating WhatsApp chat icon linking to company support number"
+        ]
+      },
+      {
+        "page": "Booking Flow",
+        "route": "/book",
+        "type": "multi-step form",
+        "steps": [
+          {
+            "step": 1,
+            "name": "Select Flight Type",
+            "fields": ["One-way", "Return"]
+          },
+          {
+            "step": 2,
+            "name": "Flight Details",
+            "fields": ["From", "To", "Departure Date", "Return Date (conditional)", "Preferred Airline (optional)", "Class"]
+          },
+          {
+            "step": 3,
+            "name": "Passenger Details",
+            "fields": ["Full Name", "Gender", "Date of Birth", "Email", "Phone (optional)", "Nationality (optional)"]
+          },
+          {
+            "step": 4,
+            "name": "Review & Confirm",
+            "features": ["Display all entered info", "Editable sections", "Proceed to Payment button"]
+          },
+          {
+            "step": 5,
+            "name": "Payment Page",
+            "features": [
+              "Display total price",
+              "Payment gateway selection (Stripe, Paystack, Flutterwave)",
+              "Trigger payment initiation request to backend",
+              "On success → redirect to confirmation page"
+            ]
+          }
+        ]
+      },
+      {
+        "page": "Post-Payment Instruction Screen",
+        "route": "/confirmation",
+        "features": [
+          "Display Order Number",
+          "Display user email",
+          "Text: 'Your booking has been received. You will receive your ticket via email within 1 hour. Check your inbox and spam folder.'",
+          "WhatsApp chat icon linking to support",
+          "Email resend option (calls /api/resend-email)"
+        ]
+      },
+      {
+        "page": "Admin Dashboard (Phase 2)",
+        "route": "/admin",
+        "features": [
+          "Login (basic auth for now)",
+          "View all orders table",
+          "Filter by status: pending, paid, completed",
+          "Upload ticket PDF (connect to Firebase Storage)",
+          "Send ticket to user via email",
+          "Mark as Completed button"
+        ]
+      }
+    ],
+    "frontend_logic": {
+      "order_number_generation": "Displayed after payment success (value returned from backend)",
+      "form_state": "Persisted locally using context or sessionStorage",
+      "api_calls": {
+        "create_order": "POST /api/orders",
+        "initiate_payment": "POST /api/payment",
+        "resend_email": "POST /api/resend-email"
+      }
+    },
+    "user_experience": {
+      "post_payment_message": "Reassure users their ticket will arrive within 1 hour",
+      "whatsapp_support": "Floating icon linking to https://wa.me/[support_number]?text=Hi%20I%20just%20booked%20a%20ticket%20(order%20DUM-xxxx)",
+      "responsive_behavior": "Mobile-first layout with airline aesthetic"
+    }
+  },
+
+  "backend": {
+    "goal": "Implement a secure backend to process payments, store orders, notify admins, and send emails once tickets are manually fulfilled.",
+    "architecture": {
+      "server_type": "Next.js API routes (or standalone Node/Express server if needed)",
+      "database": "Firebase Firestore",
+      "file_storage": "Firebase Storage",
+      "authentication": "Basic admin login (email/password or JWT-based for admin dashboard)"
+    },
+    "data_model": {
+      "collection": "orders",
+      "fields": {
+        "orderNumber": "string (e.g., DUM-YYYYMMDD-XXXX)",
+        "status": "pending_payment | paid | processing | completed",
+        "paymentProvider": "stripe | paystack | flutterwave",
+        "paymentReference": "string",
+        "createdAt": "timestamp",
+        "paidAt": "timestamp",
+        "expectedDeliveryBy": "timestamp (createdAt + 1 hour)",
+        "user": {
+          "name": "string",
+          "email": "string",
+          "phone": "string",
+          "nationality": "string",
+          "dob": "date"
+        },
+        "flight": {
+          "from": "string",
+          "to": "string",
+          "departDate": "date",
+          "returnDate": "date",
+          "airlinePref": "string",
+          "travelClass": "string"
+        },
+        "ticketUrl": "string",
+        "notes": "string",
+        "adminAssigned": "boolean"
+      }
+    },
+    "api_endpoints": [
+      {
+        "path": "/api/orders",
+        "method": "POST",
+        "description": "Creates a new booking order in Firestore before payment.",
+        "input": {
+          "flight": "object",
+          "user": "object"
+        },
+        "output": {
+          "orderId": "string",
+          "orderNumber": "string",
+          "status": "pending_payment"
+        }
+      },
+      {
+        "path": "/api/payment",
+        "method": "POST",
+        "description": "Initializes payment via selected provider and returns a payment link or client secret.",
+        "input": {
+          "orderId": "string",
+          "provider": "stripe | paystack | flutterwave"
+        },
+        "output": {
+          "payment_url": "string"
+        }
+      },
+      {
+        "path": "/api/webhooks/:provider",
+        "method": "POST",
+        "description": "Webhook endpoint for each payment provider to confirm successful payment.",
+        "action": [
+          "Verify signature/transaction using provider API",
+          "Update order status to 'paid' and set paidAt timestamp",
+          "Notify admin via email using SendGrid"
+        ]
+      },
+      {
+        "path": "/api/admin/mark-completed",
+        "method": "POST",
+        "description": "Called from admin dashboard after ticket upload and email send.",
+        "input": {
+          "orderId": "string",
+          "ticketUrl": "string"
+        },
+        "action": [
+          "Update Firestore order status to 'completed'",
+          "Send email with ticket link to customer via SendGrid"
+        ]
+      },
+      {
+        "path": "/api/resend-email",
+        "method": "POST",
+        "description": "Re-sends confirmation or ticket email to customer on request."
+      }
+    ],
+    "integrations": {
+      "payments": {
+        "stripe": "checkout.session or payment_intent API + webhook verification",
+        "paystack": "transaction initialize + verify API",
+        "flutterwave": "checkout + verify API"
+      },
+      "email": {
+        "provider": "SendGrid",
+        "templates": [
+          "payment_confirmation",
+          "ticket_delivery"
+        ]
+      },
+      "notifications": {
+        "admin_email": "Notify on every paid order",
+        "slack_or_sms": "optional future integration"
+      }
+    },
+    "security": {
+      "webhooks": "Signature verification and transaction re-validation before updating order status",
+      "api_keys": "Stored as environment variables (NEXT_PUBLIC_ for client, others server-side only)",
+      "firestore_rules": "Restrict write access to server/admin only"
+    },
+    "admin_flow": {
+      "1": "Admin receives payment notification email.",
+      "2": "Admin logs into dashboard, views 'paid' orders.",
+      "3": "Admin manually generates dummy flight ticket PDF.",
+      "4": "Admin uploads ticket to Firebase Storage.",
+      "5": "Admin sends email with ticket and marks as completed."
+    }
+  },
+
+  "deployment": {
+    "frontend_backend_hosting": "Vercel (Next.js)",
+    "database_hosting": "Firebase",
+    "email_service": "SendGrid",
+    "payment_services": "Stripe / Paystack / Flutterwave",
+    "environment": "Production and staging with .env files"
+  },
+
+  "next_steps": [
+    "Attach Stitch-generated UI code to Cursor as Next.js pages/components.",
+    "Implement API routes based on backend PRD.",
+    "Connect Firestore, SendGrid, and payment webhooks.",
+    "Test full booking → payment → admin workflow end-to-end.",
+    "Deploy to Vercel once verified."
+  ]
+}
+
