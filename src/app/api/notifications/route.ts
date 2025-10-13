@@ -5,14 +5,13 @@ import { cookies } from 'next/headers';
 /**
  * GET - Fetch user notifications
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createServiceClient();
     
     // Get user from session
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const accessToken = cookieStore.get('sb-access-token')?.value;
-    const refreshToken = cookieStore.get('sb-refresh-token')?.value;
     
     if (!accessToken) {
       return NextResponse.json(
@@ -75,7 +74,7 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createServiceClient();
     
     // Get user from session
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const accessToken = cookieStore.get('sb-access-token')?.value;
     
     if (!accessToken) {
