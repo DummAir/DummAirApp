@@ -75,33 +75,32 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!orderError && order) {
-      const orderDetails = {
-        orderNumber: order.order_number,
-        flightFrom: order.flight_from,
-        flightTo: order.flight_to,
-        departDate: new Date(order.flight_depart_date).toLocaleDateString('en-US', { 
-          year: 'numeric', month: 'long', day: 'numeric' 
-        }),
-        returnDate: order.flight_return_date 
-          ? new Date(order.flight_return_date).toLocaleDateString('en-US', { 
-              year: 'numeric', month: 'long', day: 'numeric' 
-            })
-          : undefined,
-        numberOfTravelers: order.number_of_travelers,
-        amount: order.payment_amount,
-        flightType: order.flight_type,
-      };
+      // Only send notifications to REGISTERED users (they have dashboards)
+      // Guest users will receive ticket via admin's "Send Email" button
+      if (order.user_id) {
+        const orderDetails = {
+          orderNumber: order.order_number,
+          flightFrom: order.flight_from,
+          flightTo: order.flight_to,
+          departDate: new Date(order.flight_depart_date).toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+          }),
+          returnDate: order.flight_return_date 
+            ? new Date(order.flight_return_date).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+              })
+            : undefined,
+          numberOfTravelers: order.number_of_travelers,
+          amount: order.payment_amount,
+          flightType: order.flight_type,
+        };
 
-      // Send ticket ready email to client
-      const clientEmail = order.guest_email;
-      const dashboardUrl = order.user_id 
-        ? `${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/dashboard`
-        : publicUrl;
+        const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/dashboard`;
 
-      if (clientEmail) {
+        // Send ticket ready email to registered user
         await sendAndLogEmail(
           {
-            to: clientEmail,
+            to: order.guest_email,
             subject: `Your Ticket is Ready - ${order.order_number}`,
             html: getTicketReadyEmail(orderDetails, dashboardUrl),
           },
@@ -109,14 +108,12 @@ export async function POST(request: NextRequest) {
             orderId: order.id,
             userId: order.user_id,
             emailType: 'ticket_delivery',
-            recipient: clientEmail,
+            recipient: order.guest_email,
             subject: `Your Ticket is Ready - ${order.order_number}`,
           }
         );
-      }
 
-      // Create in-app notification for registered users
-      if (order.user_id) {
+        // Create in-app notification for registered users
         await createNotification({
           userId: order.user_id,
           orderId: order.id,
@@ -125,6 +122,10 @@ export async function POST(request: NextRequest) {
           message: `Your ticket for ${order.flight_from} → ${order.flight_to} is now available for download.`,
           actionUrl: '/dashboard',
         });
+
+        console.log('✅ Registered user notified: Email sent + in-app notification created');
+      } else {
+        console.log('ℹ️ Guest order: No automatic notification sent. Admin will send email manually.');
       }
     }
 
