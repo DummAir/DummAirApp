@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateOrderStatus } from '@/lib/db/orders';
 import { createServiceClient } from '@/lib/supabase/server';
+import { sendAndLogEmail } from '@/lib/email/service';
+import { getTicketReadyEmail } from '@/lib/email/templates';
+import { createNotification } from '@/lib/notifications/service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,6 +66,67 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('✅ Order updated with ticket URL');
+
+    // Fetch order details for notifications
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+
+    if (!orderError && order) {
+      const orderDetails = {
+        orderNumber: order.order_number,
+        flightFrom: order.flight_from,
+        flightTo: order.flight_to,
+        departDate: new Date(order.flight_depart_date).toLocaleDateString('en-US', { 
+          year: 'numeric', month: 'long', day: 'numeric' 
+        }),
+        returnDate: order.flight_return_date 
+          ? new Date(order.flight_return_date).toLocaleDateString('en-US', { 
+              year: 'numeric', month: 'long', day: 'numeric' 
+            })
+          : undefined,
+        numberOfTravelers: order.number_of_travelers,
+        amount: order.payment_amount,
+        flightType: order.flight_type,
+      };
+
+      // Send ticket ready email to client
+      const clientEmail = order.guest_email;
+      const dashboardUrl = order.user_id 
+        ? `${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/dashboard`
+        : publicUrl;
+
+      if (clientEmail) {
+        await sendAndLogEmail(
+          {
+            to: clientEmail,
+            subject: `Your Ticket is Ready - ${order.order_number}`,
+            html: getTicketReadyEmail(orderDetails, dashboardUrl),
+          },
+          {
+            orderId: order.id,
+            userId: order.user_id,
+            emailType: 'ticket_delivery',
+            recipient: clientEmail,
+            subject: `Your Ticket is Ready - ${order.order_number}`,
+          }
+        );
+      }
+
+      // Create in-app notification for registered users
+      if (order.user_id) {
+        await createNotification({
+          userId: order.user_id,
+          orderId: order.id,
+          type: 'ticket_ready',
+          title: '🎫 Your Ticket is Ready!',
+          message: `Your ticket for ${order.flight_from} → ${order.flight_to} is now available for download.`,
+          actionUrl: '/dashboard',
+        });
+      }
+    }
 
     return NextResponse.json({
       success: true,

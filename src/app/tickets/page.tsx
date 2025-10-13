@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Package, LogOut, ArrowLeft, Filter, Download, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import NotificationBell from '@/components/NotificationBell';
 
 interface Order {
   id: string;
@@ -136,13 +137,18 @@ export default function TicketsPage() {
                 <p className="text-white/80 text-sm">{user?.email}</p>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-white/90 hover:text-white transition-colors"
-            >
-              <LogOut size={20} />
-              <span className="hidden md:inline">Logout</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="[&_button]:text-white [&_button]:hover:bg-white/20">
+                <NotificationBell />
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-white/90 hover:text-white transition-colors"
+              >
+                <LogOut size={20} />
+                <span className="hidden md:inline">Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

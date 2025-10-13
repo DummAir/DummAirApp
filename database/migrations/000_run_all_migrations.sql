@@ -38,7 +38,12 @@
 \i 007_create_saved_travelers_table.sql
 
 -- ============================================================================
--- STEP 8: Create Admin User (Default)
+-- STEP 8: Create Notifications Table
+-- ============================================================================
+\i 008_create_notifications_table.sql
+
+-- ============================================================================
+-- STEP 9: Create Admin User (Default)
 -- ============================================================================
 -- Note: Change the email and password hash as needed
 -- Password: Admin@123 (hash this properly in production!)

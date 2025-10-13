@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Package, LogOut, User, CheckCircle, Clock, Download, CreditCard, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import NotificationBell from '@/components/NotificationBell';
 
 interface Order {
   id: string;
@@ -164,6 +165,7 @@ export default function DashboardPage() {
             
             {/* Navigation Buttons */}
             <div className="flex items-center gap-2 md:gap-3">
+              <NotificationBell />
               <Link
                 href="/tickets"
                 className="px-2 py-1.5 md:px-4 md:py-2 bg-[#2472e0] text-white rounded-lg text-xs md:text-sm font-semibold hover:bg-[#1e5bb8] transition-colors whitespace-nowrap"

@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS email_logs (
       'admin_notification',
       'password_reset',
       'welcome',
-      'order_update'
+      'order_update',
+      'payment_reminder',
+      'receipt'
     )
   ),
   recipient VARCHAR(255) NOT NULL,

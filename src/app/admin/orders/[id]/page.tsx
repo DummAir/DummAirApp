@@ -42,6 +42,7 @@ export default function AdminOrderDetailPage() {
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   useEffect(() => {
     checkAdmin();
@@ -173,6 +174,38 @@ export default function AdminOrderDetailPage() {
     } catch (error) {
       console.error('Error updating order:', error);
       alert('Failed to update order');
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!order) return;
+
+    setIsSendingEmail(true);
+
+    try {
+      const response = await fetch('/api/admin/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId: order.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send email');
+      }
+
+      alert(`Email sent successfully to ${data.recipient}`);
+    } catch (error: unknown) {
+      console.error('Error sending email:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to send email: ${errorMessage}`);
+    } finally {
+      setIsSendingEmail(false);
     }
   };
 
@@ -372,10 +405,16 @@ export default function AdminOrderDetailPage() {
 
             {/* Send Email - Show for all orders */}
             <button
-              className="flex items-center justify-center gap-2 bg-purple-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors"
+              onClick={handleSendEmail}
+              disabled={isSendingEmail}
+              className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                isSendingEmail
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-purple-500 text-white hover:bg-purple-600'
+              }`}
             >
               <Mail size={20} />
-              Send Email
+              {isSendingEmail ? 'Sending...' : 'Send Email'}
             </button>
           </div>
 

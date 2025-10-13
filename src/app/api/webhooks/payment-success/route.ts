@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateOrderStatus } from '@/lib/db/orders';
+import { sendAndLogEmail } from '@/lib/email/service';
+import { getPaymentConfirmationEmail, getPaymentReceiptEmail } from '@/lib/email/templates';
+import { createNotification } from '@/lib/notifications/service';
+import { createServiceClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { orderId, provider } = body;
+    const { orderId, provider, transactionId } = body;
 
     if (!orderId) {
       return NextResponse.json(
@@ -17,6 +21,99 @@ export async function POST(request: NextRequest) {
     await updateOrderStatus(orderId, 'paid');
 
     console.log(`✅ Order ${orderId} marked as paid via ${provider || 'unknown'}`);
+
+    // Fetch order details for email
+    const supabase = await createServiceClient();
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+
+    if (orderError || !order) {
+      console.error('❌ Failed to fetch order for email:', orderError);
+      return NextResponse.json({ success: true }); // Still return success as payment is processed
+    }
+
+    const orderDetails = {
+      orderNumber: order.order_number,
+      flightFrom: order.flight_from,
+      flightTo: order.flight_to,
+      departDate: new Date(order.flight_depart_date).toLocaleDateString('en-US', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+      }),
+      returnDate: order.flight_return_date 
+        ? new Date(order.flight_return_date).toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+          })
+        : undefined,
+      numberOfTravelers: order.number_of_travelers,
+      amount: order.payment_amount,
+      flightType: order.flight_type,
+    };
+
+    // 1. Send payment confirmation email to client
+    const clientEmail = order.guest_email;
+    if (clientEmail) {
+      await sendAndLogEmail(
+        {
+          to: clientEmail,
+          subject: `Payment Confirmed - Order ${order.order_number}`,
+          html: getPaymentConfirmationEmail(orderDetails, false),
+        },
+        {
+          orderId: order.id,
+          userId: order.user_id,
+          emailType: 'payment_confirmation',
+          recipient: clientEmail,
+          subject: `Payment Confirmed - Order ${order.order_number}`,
+        }
+      );
+
+      // Send payment receipt
+      await sendAndLogEmail(
+        {
+          to: clientEmail,
+          subject: `Payment Receipt - ${order.order_number}`,
+          html: getPaymentReceiptEmail(orderDetails, transactionId || order.payment_reference || 'N/A'),
+        },
+        {
+          orderId: order.id,
+          userId: order.user_id,
+          emailType: 'receipt',
+          recipient: clientEmail,
+          subject: `Payment Receipt - ${order.order_number}`,
+        }
+      );
+    }
+
+    // 2. Send notification to admin
+    const adminEmail = process.env.ADMIN_EMAIL || 'abiolayoung229@gmail.com';
+    await sendAndLogEmail(
+      {
+        to: adminEmail,
+        subject: `New Order Received - ${order.order_number}`,
+        html: getPaymentConfirmationEmail(orderDetails, true),
+      },
+      {
+        orderId: order.id,
+        emailType: 'admin_notification',
+        recipient: adminEmail,
+        subject: `New Order Received - ${order.order_number}`,
+      }
+    );
+
+    // 3. Create in-app notification for registered users
+    if (order.user_id) {
+      await createNotification({
+        userId: order.user_id,
+        orderId: order.id,
+        type: 'payment_confirmed',
+        title: 'Payment Confirmed',
+        message: `Your payment for order ${order.order_number} has been confirmed. Your ticket will be ready soon.`,
+        actionUrl: '/dashboard',
+      });
+    }
 
     return NextResponse.json({ success: true });
 
