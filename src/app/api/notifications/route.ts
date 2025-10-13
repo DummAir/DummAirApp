@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { createServiceClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 
 /**
  * GET - Fetch user notifications
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClientComponentClient();
+    const supabase = await createServiceClient();
     
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get user from session
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('sb-access-token')?.value;
+    const refreshToken = cookieStore.get('sb-refresh-token')?.value;
+    
+    if (!accessToken) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please log in' },
+        { status: 401 }
+      );
+    }
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
     
     if (authError || !user) {
       return NextResponse.json(
@@ -19,10 +30,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const serviceSupabase = await createServiceClient();
-
     // Fetch notifications for the user
-    const { data: notifications, error: notificationsError } = await serviceSupabase
+    const { data: notifications, error: notificationsError } = await supabase
       .from('notifications')
       .select('*')
       .eq('user_id', user.id)
@@ -36,6 +45,8 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    console.log(`✅ Fetched ${notifications?.length || 0} notifications for user ${user.id}`);
 
     // Get unread count
     const unreadCount = notifications?.filter(n => !n.is_read).length || 0;
@@ -61,10 +72,20 @@ export async function GET(request: NextRequest) {
  */
 export async function PATCH(request: NextRequest) {
   try {
-    const supabase = createClientComponentClient();
+    const supabase = await createServiceClient();
     
-    // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get user from session
+    const cookieStore = cookies();
+    const accessToken = cookieStore.get('sb-access-token')?.value;
+    
+    if (!accessToken) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
     
     if (authError || !user) {
       return NextResponse.json(
@@ -76,11 +97,9 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json();
     const { notificationId, markAllAsRead } = body;
 
-    const serviceSupabase = await createServiceClient();
-
     if (markAllAsRead) {
       // Mark all notifications as read
-      const { error } = await serviceSupabase
+      const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
         .eq('user_id', user.id)
@@ -100,7 +119,7 @@ export async function PATCH(request: NextRequest) {
       });
     } else if (notificationId) {
       // Mark single notification as read
-      const { error } = await serviceSupabase
+      const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
         .eq('id', notificationId)
