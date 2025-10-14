@@ -45,7 +45,7 @@ export async function GET() {
     console.log('\n🔍 CHECK 2: Database Connection');
     
     const supabase = await createServiceClient();
-    const { data: testQuery, error: dbError } = await supabase
+    const { error: dbError } = await supabase
       .from('email_logs')
       .select('count')
       .limit(1);
@@ -63,7 +63,7 @@ export async function GET() {
     // ============================================================================
     console.log('\n🔍 CHECK 3: Recent Email Logs');
     
-    const { data: recentEmails, error: emailLogError } = await supabase
+    const { data: recentEmails } = await supabase
       .from('email_logs')
       .select('*')
       .order('created_at', { ascending: false })
@@ -181,29 +181,35 @@ export async function GET() {
     console.log('\n📊 SUMMARY:');
     console.log('✅ Checks completed');
     
+    const checks = results.checks as { hasResendKey?: boolean; databaseConnected?: boolean; adminEmail?: string };
+    const tests = results.tests as { testEmailSent?: boolean };
+
     const allGood = 
-      (results.checks as any).hasResendKey &&
-      (results.checks as any).databaseConnected &&
-      (results.tests as any).testEmailSent;
+      checks.hasResendKey &&
+      checks.databaseConnected &&
+      tests.testEmailSent;
+
+    const criticalIssues: string[] = [];
+    const warnings: string[] = [];
+
+    if (!checks.hasResendKey) {
+      criticalIssues.push('RESEND_API_KEY not set');
+    }
+    if (!checks.databaseConnected) {
+      criticalIssues.push('Database connection failed');
+    }
+    if (!tests.testEmailSent) {
+      criticalIssues.push('Test email failed to send');
+    }
+    if (!checks.adminEmail || checks.adminEmail === 'NOT SET (using default)') {
+      warnings.push('ADMIN_EMAIL not set (using default: payment@dummair.com)');
+    }
 
     results.summary = {
       allSystemsGo: allGood,
-      criticalIssues: [] as string[],
-      warnings: [] as string[],
+      criticalIssues,
+      warnings,
     };
-
-    if (!(results.checks as any).hasResendKey) {
-      (results.summary.criticalIssues as string[]).push('RESEND_API_KEY not set');
-    }
-    if (!(results.checks as any).databaseConnected) {
-      (results.summary.criticalIssues as string[]).push('Database connection failed');
-    }
-    if (!(results.tests as any).testEmailSent) {
-      (results.summary.criticalIssues as string[]).push('Test email failed to send');
-    }
-    if (!(results.checks as any).adminEmail || (results.checks as any).adminEmail === 'NOT SET (using default)') {
-      (results.summary.warnings as string[]).push('ADMIN_EMAIL not set (using default: payment@dummair.com)');
-    }
 
     return NextResponse.json(results, { status: 200 });
 

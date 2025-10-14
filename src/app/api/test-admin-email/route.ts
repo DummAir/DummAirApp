@@ -6,7 +6,7 @@ import { getAdminNotificationEmail } from '@/lib/email/templates';
  * Test endpoint specifically for admin email notifications
  * This helps verify admin email configuration is working
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('🧪 Testing admin email notification...');
 

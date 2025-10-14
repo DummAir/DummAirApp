@@ -91,7 +91,7 @@ export default function SignupPage() {
             
             <h1 className="text-2xl font-bold text-[#111417] mb-3">Account Created Successfully!</h1>
             <p className="text-[#647287] mb-6">
-              Welcome to DummAir! We've sent a verification link to <strong className="text-[#111417]">{email}</strong>.
+              Welcome to DummAir! We&apos;ve sent a verification link to <strong className="text-[#111417]">{email}</strong>.
             </p>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
@@ -111,7 +111,7 @@ export default function SignupPage() {
                 Go to Login
               </Link>
               <p className="text-xs text-[#647287]">
-                Didn't receive the email? Check your spam folder or contact support.
+                Didn&apos;t receive the email? Check your spam folder or contact support.
               </p>
             </div>
           </div>

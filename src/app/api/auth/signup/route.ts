@@ -24,12 +24,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client for auth
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
     // Sign up user with Supabase Auth (with auto-confirm using admin API)
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
