@@ -73,7 +73,11 @@ function ConfirmationContent() {
   const updateOrderStatus = async () => {
     if (orderId) {
       try {
-        await fetch('/api/webhooks/payment-success', {
+        console.log('🔄 Calling payment-success webhook...');
+        console.log('   Order ID:', orderId);
+        console.log('   Provider:', provider);
+        
+        const response = await fetch('/api/webhooks/payment-success', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -84,9 +88,19 @@ function ConfirmationContent() {
             status: 'paid',
           }),
         });
-        console.log('✅ Order status updated to paid');
+
+        const data = await response.json();
+        
+        console.log('✅ Webhook response:', response.status, data);
+        
+        if (!response.ok) {
+          console.error('❌ Webhook failed:', data);
+        } else {
+          console.log('✅ Order status updated to paid');
+          console.log('✅ Admin email should have been sent!');
+        }
       } catch (error) {
-        console.error('Failed to update order status:', error);
+        console.error('❌ Failed to update order status:', error);
       }
     }
   };
