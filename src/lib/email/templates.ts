@@ -411,7 +411,83 @@ export function getPaymentReminderEmail(order: OrderDetails, paymentUrl: string)
 }
 
 /**
- * 6. Admin Notification Email
+ * 6. Email Verification Email
+ */
+export function getEmailVerificationEmail(verificationUrl: string, userName: string): string {
+  const content = `
+    <h2 style="color: #111827; margin: 0 0 20px 0; font-size: 24px;">Welcome to DummAir!</h2>
+    
+    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+      Hi ${userName},
+    </p>
+    
+    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+      Thank you for signing up! To complete your registration and verify your email address, please click the button below:
+    </p>
+    
+    <!-- Verification Button -->
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${verificationUrl}" style="display: inline-block; background: linear-gradient(135deg, #2472e0 0%, #1e5bb8 100%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+        Verify Email Address
+      </a>
+    </div>
+    
+    <div style="background-color: #eff6ff; border-left: 4px solid #2472e0; padding: 15px; margin: 25px 0; border-radius: 4px;">
+      <p style="color: #1e40af; margin: 0; font-size: 14px; line-height: 1.6;">
+        <strong>Note:</strong> You can start using your account even without verification, but we recommend verifying your email for security and account recovery.
+      </p>
+    </div>
+    
+    <p style="color: #6b7280; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">
+      If you didn't create an account, you can safely ignore this email.
+    </p>
+    
+    <p style="color: #6b7280; font-size: 13px; margin: 10px 0 0 0; line-height: 1.6;">
+      This verification link will expire in 24 hours.
+    </p>
+  `;
+  
+  return getBaseTemplate(content);
+}
+
+/**
+ * 7. Password Reset Email
+ */
+export function getPasswordResetEmail(resetUrl: string, userName: string): string {
+  const content = `
+    <h2 style="color: #111827; margin: 0 0 20px 0; font-size: 24px;">Reset Your Password</h2>
+    
+    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+      Hi ${userName},
+    </p>
+    
+    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px; font-size: 16px;">
+      We received a request to reset your password for your DummAir account. Click the button below to create a new password:
+    </p>
+    
+    <!-- Reset Button -->
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #2472e0 0%, #1e5bb8 100%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+        Reset Password
+      </a>
+    </div>
+    
+    <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0; border-radius: 4px;">
+      <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.6;">
+        <strong>Security Notice:</strong> If you didn't request a password reset, please ignore this email. Your password will remain unchanged.
+      </p>
+    </div>
+    
+    <p style="color: #6b7280; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">
+      This password reset link will expire in 1 hour for security reasons.
+    </p>
+  `;
+  
+  return getBaseTemplate(content);
+}
+
+/**
+ * 8. Admin Notification Email
  */
 export function getAdminNotificationEmail(order: OrderDetails & { orderId?: string }, notificationType: 'new_order' | 'payment_received'): string {
   const content = `

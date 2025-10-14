@@ -43,7 +43,12 @@
 \i 008_create_notifications_table.sql
 
 -- ============================================================================
--- STEP 9: Create Admin User (Default)
+-- STEP 9: Create Email Verification Tokens Table
+-- ============================================================================
+\i 009_add_email_verification.sql
+
+-- ============================================================================
+-- STEP 10: Create Admin User (Default)
 -- ============================================================================
 -- Note: Change the email and password hash as needed
 -- Password: Admin@123 (hash this properly in production!)

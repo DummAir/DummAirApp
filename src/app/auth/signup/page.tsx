@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function SignupPage() {
@@ -17,6 +17,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,16 +53,24 @@ export default function SignupPage() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      // Sign in the user after successful signup
+      console.log('✅ Account created successfully');
+
+      // Auto-login the user after signup
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (signInError) throw signInError;
-
-      // Redirect to dashboard
-      router.push('/dashboard');
+      if (signInError) {
+        console.error('❌ Auto-login failed:', signInError);
+        // Still show success, user can login manually
+        setSuccess(true);
+      } else {
+        console.log('✅ Auto-login successful, redirecting to dashboard...');
+        // Redirect to dashboard after successful login
+        router.push('/dashboard');
+      }
+      
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create account';
       setError(errorMessage);
@@ -69,6 +78,47 @@ export default function SignupPage() {
       setIsLoading(false);
     }
   };
+
+  // Show success message after signup
+  if (success) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#2472e0] to-[#1e5bb8] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+              <CheckCircle size={32} className="text-green-500" />
+            </div>
+            
+            <h1 className="text-2xl font-bold text-[#111417] mb-3">Account Created Successfully!</h1>
+            <p className="text-[#647287] mb-6">
+              Welcome to DummAir! We've sent a verification link to <strong className="text-[#111417]">{email}</strong>.
+            </p>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+              <p className="text-sm text-[#111417] font-semibold mb-2">📧 Next Steps:</p>
+              <ol className="text-sm text-[#647287] space-y-1 ml-4">
+                <li>1. Check your email inbox</li>
+                <li>2. Click the verification link we sent</li>
+                <li>3. You can login now or after verification!</li>
+              </ol>
+            </div>
+
+            <div className="space-y-3">
+              <Link
+                href="/auth/login"
+                className="block w-full bg-[#2472e0] text-white py-3 rounded-lg font-bold hover:bg-[#1e5bb8] transition-colors"
+              >
+                Go to Login
+              </Link>
+              <p className="text-xs text-[#647287]">
+                Didn't receive the email? Check your spam folder or contact support.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#2472e0] to-[#1e5bb8] flex items-center justify-center p-4">

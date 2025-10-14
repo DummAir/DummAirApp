@@ -1,14 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Lock, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const searchParams = useSearchParams();
   
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,6 +15,16 @@ export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const tokenParam = searchParams.get('token');
+    if (!tokenParam) {
+      setError('Invalid reset link. Please request a new password reset.');
+    } else {
+      setToken(tokenParam);
+    }
+  }, [searchParams]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,19 +44,34 @@ export default function ResetPasswordPage() {
       return;
     }
 
+    if (!token) {
+      setError('Invalid reset link');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: password,
+      // Call our custom reset password API
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, password }),
       });
 
-      if (updateError) throw updateError;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to reset password');
+      }
 
       setSuccess(true);
       
-      // Redirect to login after 2 seconds
+      // Redirect to login after 3 seconds
       setTimeout(() => {
         router.push('/auth/login');
-      }, 2000);
+      }, 3000);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to reset password';
       setError(errorMessage);

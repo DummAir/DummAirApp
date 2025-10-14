@@ -4,11 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const supabase = createClientComponentClient();
   
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,11 +19,20 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
+      // Call our custom API endpoint
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       });
 
-      if (resetError) throw resetError;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send reset email');
+      }
 
       setEmailSent(true);
     } catch (err: unknown) {
