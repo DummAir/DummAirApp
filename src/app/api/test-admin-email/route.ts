@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email/service';
 import { getAdminNotificationEmail } from '@/lib/email/templates';
 
