@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Suspense } from 'react';
 
-export default function SignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClientComponentClient();
   
   const [name, setName] = useState('');
@@ -18,6 +20,17 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [redirectPath, setRedirectPath] = useState<string>('/dashboard');
+
+  useEffect(() => {
+    // Check for redirect parameter
+    const redirect = searchParams.get('redirect');
+    const step = searchParams.get('step');
+    
+    if (redirect === 'book') {
+      setRedirectPath(`/book${step ? '?step=' + step : ''}`);
+    }
+  }, [searchParams]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,9 +79,9 @@ export default function SignupPage() {
         // Still show success, user can login manually
         setSuccess(true);
       } else {
-        console.log('✅ Auto-login successful, redirecting to dashboard...');
-        // Redirect to dashboard after successful login
-        router.push('/dashboard');
+        console.log('✅ Auto-login successful, redirecting to:', redirectPath);
+        // Redirect to dashboard or booking flow
+        router.push(redirectPath);
       }
       
     } catch (err: unknown) {
@@ -266,6 +279,23 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[#2472e0] to-[#1e5bb8] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <Loader2 size={48} className="mx-auto text-[#2472e0] mb-4 animate-spin" />
+            <p className="text-[#647287]">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <SignupForm />
+    </Suspense>
   );
 }
 

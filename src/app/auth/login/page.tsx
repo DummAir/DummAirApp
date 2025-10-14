@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClientComponentClient();
   
   const [email, setEmail] = useState('');
@@ -15,6 +17,17 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [redirectPath, setRedirectPath] = useState<string>('/dashboard');
+
+  useEffect(() => {
+    // Check for redirect parameter
+    const redirect = searchParams.get('redirect');
+    const step = searchParams.get('step');
+    
+    if (redirect === 'book') {
+      setRedirectPath(`/book${step ? '?step=' + step : ''}`);
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +49,8 @@ export default function LoginPage() {
         console.log('🔐 Admin user detected, redirecting to /admin');
         router.push('/admin');
       } else {
-        console.log('👤 Regular user, redirecting to /dashboard');
-        router.push('/dashboard');
+        console.log('👤 Regular user, redirecting to:', redirectPath);
+        router.push(redirectPath);
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to login';
@@ -165,6 +178,23 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-[#2472e0] to-[#1e5bb8] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 text-center">
+            <Loader2 size={48} className="mx-auto text-[#2472e0] mb-4 animate-spin" />
+            <p className="text-[#647287]">Loading...</p>
+          </div>
+        </div>
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
 

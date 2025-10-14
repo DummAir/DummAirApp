@@ -6,10 +6,12 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { countries } from '@/lib/countries';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 
 export default function BookingReview() {
   const { state, dispatch } = useBooking();
   const supabase = createClientComponentClient();
+  const router = useRouter();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [checkoutType, setCheckoutType] = useState<'guest' | 'login' | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,6 +28,16 @@ export default function BookingReview() {
       setIsAuthenticated(true);
       setUserEmail(user.email || '');
       setCheckoutType('login'); // Auto-set for authenticated users
+    }
+  };
+
+  const handleCheckoutTypeSelect = (type: 'guest' | 'login') => {
+    if (type === 'login' && !isAuthenticated) {
+      // Save current booking state and redirect to login
+      // After login, user will be redirected back to continue booking
+      router.push('/auth/login?redirect=book&step=4');
+    } else {
+      setCheckoutType(type);
     }
   };
 
@@ -265,7 +277,7 @@ export default function BookingReview() {
                   <div className="space-y-3">
                     {/* Guest Checkout */}
                     <div
-                      onClick={() => setCheckoutType('guest')}
+                      onClick={() => handleCheckoutTypeSelect('guest')}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         checkoutType === 'guest'
                           ? 'bg-blue-50 border-[#2472e0]'
@@ -290,7 +302,7 @@ export default function BookingReview() {
 
                     {/* Login/Signup */}
                     <div
-                      onClick={() => setCheckoutType('login')}
+                      onClick={() => handleCheckoutTypeSelect('login')}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         checkoutType === 'login'
                           ? 'bg-blue-50 border-[#2472e0]'
@@ -379,7 +391,7 @@ export default function BookingReview() {
 
                     {/* Guest Checkout */}
                     <div
-                      onClick={() => setCheckoutType('guest')}
+                      onClick={() => handleCheckoutTypeSelect('guest')}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         checkoutType === 'guest'
                           ? 'bg-blue-50 border-[#2472e0]'
@@ -414,7 +426,7 @@ export default function BookingReview() {
 
                     {/* Login/Signup */}
                     <div
-                      onClick={() => setCheckoutType('login')}
+                      onClick={() => handleCheckoutTypeSelect('login')}
                       className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                         checkoutType === 'login'
                           ? 'bg-blue-50 border-[#2472e0]'
@@ -513,49 +525,6 @@ export default function BookingReview() {
                   <p className="text-xs text-[#647287]">
                     ⚡ Your dummy ticket will be delivered via email within <strong>1 hour</strong>
                   </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile-only Checkout Selection */}
-            <div className="lg:hidden px-4 pb-4 space-y-3">
-              <h4 className="text-[#111417] font-bold">Choose Checkout Option</h4>
-              
-              {/* Guest Checkout - Mobile */}
-              <div
-                onClick={() => setCheckoutType('guest')}
-                className={`p-4 rounded-xl border-2 ${
-                  checkoutType === 'guest'
-                    ? 'bg-blue-50 border-[#2472e0]'
-                    : 'bg-white border-[#dce0e5]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <User size={20} className={checkoutType === 'guest' ? 'text-[#2472e0]' : 'text-[#111417]'} />
-                  <div className="flex-1">
-                    <p className="font-semibold text-[#111417]">Guest Checkout</p>
-                    <p className="text-xs text-[#647287]">Quick & easy</p>
-                  </div>
-                  {checkoutType === 'guest' && <CheckCircle size={20} className="text-[#2472e0]" />}
-                </div>
-              </div>
-
-              {/* Login/Signup - Mobile */}
-              <div
-                onClick={() => setCheckoutType('login')}
-                className={`p-4 rounded-xl border-2 ${
-                  checkoutType === 'login'
-                    ? 'bg-blue-50 border-[#2472e0]'
-                    : 'bg-white border-[#dce0e5]'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <UserPlus size={20} className={checkoutType === 'login' ? 'text-[#2472e0]' : 'text-[#111417]'} />
-                  <div className="flex-1">
-                    <p className="font-semibold text-[#111417]">Login / Sign Up</p>
-                    <p className="text-xs text-[#647287]">Track bookings & save details</p>
-                  </div>
-                  {checkoutType === 'login' && <CheckCircle size={20} className="text-[#2472e0]" />}
                 </div>
               </div>
             </div>
