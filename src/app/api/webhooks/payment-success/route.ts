@@ -4,6 +4,7 @@ import { sendAndLogEmail } from '@/lib/email/service';
 import { getPaymentConfirmationEmail, getPaymentReceiptEmail, getAdminNotificationEmail } from '@/lib/email/templates';
 import { createNotification } from '@/lib/notifications/service';
 import { createServiceClient } from '@/lib/supabase/server';
+import { sendWhatsAppNotification, formatAdminOrderNotification } from '@/lib/whatsapp/service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -115,6 +116,36 @@ export async function POST(request: NextRequest) {
       console.log(`   Message ID: ${adminEmailResult.messageId}`);
     } else {
       console.error(`❌ Failed to send admin notification: ${adminEmailResult.error}`);
+    }
+
+    // 2b. Send WhatsApp notification to admin (if configured)
+    const adminPhone = process.env.ADMIN_WHATSAPP_NUMBER;
+    if (adminPhone) {
+      console.log('📱 Sending WhatsApp notification to admin...');
+      
+      const whatsappMessage = formatAdminOrderNotification({
+        orderNumber: order.order_number,
+        customerEmail: order.guest_email,
+        route: `${order.flight_from} → ${order.flight_to}`,
+        departDate: orderDetails.departDate,
+        travelers: order.number_of_travelers,
+        amount: order.payment_amount,
+        adminDashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'https://dummair.com'}/admin/orders/${order.id}`,
+      });
+
+      const whatsappResult = await sendWhatsAppNotification({
+        to: adminPhone,
+        message: whatsappMessage,
+      });
+
+      if (whatsappResult.success) {
+        console.log('✅ WhatsApp notification sent to admin');
+      } else {
+        console.log('ℹ️ WhatsApp notification not sent:', whatsappResult.error);
+        // Not critical - continue even if WhatsApp fails
+      }
+    } else {
+      console.log('ℹ️ ADMIN_WHATSAPP_NUMBER not configured. Skipping WhatsApp notification.');
     }
 
     // 3. Create in-app notification for registered users
