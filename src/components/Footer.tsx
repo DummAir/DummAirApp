@@ -70,22 +70,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4">Support</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+                <Link href="mailto:support@dummair.com" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+                <Link href="/terms" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+                <Link href="/privacy" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+                <Link href="/refund" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
                   Refund Policy
                 </Link>
               </li>
