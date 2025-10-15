@@ -16,83 +16,83 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    location: "New York, USA",
-    image: "https://randomuser.me/api/portraits/women/1.jpg",
+    name: "Chioma Okafor",
+    location: "Lagos, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Chioma+Okafor&background=2472e0&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Absolutely fantastic service! Got my dummy ticket within 30 minutes. Perfect for my visa application. Highly recommended!"
+    comment: "Absolutely fantastic service! Got my dummy ticket within 30 minutes for my UK visa application. The process was very smooth and professional. Highly recommended!"
   },
   {
     id: 2,
-    name: "Mohammed Al-Rashid",
-    location: "Dubai, UAE",
-    image: "https://randomuser.me/api/portraits/men/2.jpg",
+    name: "Adebayo Adeleke",
+    location: "Abuja, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Adebayo+Adeleke&background=10b981&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Very professional and quick. The ticket looked authentic and was accepted by the embassy without any issues. Will use again!"
+    comment: "Very professional and quick service! I needed a flight reservation for my Canadian visa, and DummAir delivered within an hour. The embassy accepted it without any issues!"
   },
   {
     id: 3,
-    name: "Emma Chen",
-    location: "Singapore",
-    image: "https://randomuser.me/api/portraits/women/3.jpg",
+    name: "Sarah Johnson",
+    location: "New York, USA",
+    image: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=f59e0b&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Excellent service! The booking process was smooth, and customer support was very helpful. Got my ticket delivered on time."
+    comment: "Excellent service! The booking process was smooth, and customer support was very helpful. Got my ticket delivered on time for my Schengen visa."
   },
   {
     id: 4,
-    name: "Carlos Rodriguez",
-    location: "Madrid, Spain",
-    image: "https://randomuser.me/api/portraits/men/4.jpg",
+    name: "Ngozi Eze",
+    location: "Port Harcourt, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Ngozi+Eze&background=8b5cf6&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Best dummy ticket service I've used. Fast, reliable, and affordable. The ticket was verified successfully at the consulate."
+    comment: "Best dummy ticket service I've used! Fast, reliable, and very affordable. Used it for my US visa application and it was verified successfully at the embassy. God bless DummAir!"
   },
   {
     id: 5,
     name: "Priya Patel",
     location: "Mumbai, India",
-    image: "https://randomuser.me/api/portraits/women/5.jpg",
+    image: "https://ui-avatars.com/api/?name=Priya+Patel&background=ec4899&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Amazing experience! Got my flight reservation for visa application in just 20 minutes. Very professional and trustworthy service."
+    comment: "Amazing experience! Got my flight reservation for visa application in just 20 minutes. Very professional and trustworthy service. Will definitely use again!"
   },
   {
     id: 6,
-    name: "James Williams",
-    location: "London, UK",
-    image: "https://randomuser.me/api/portraits/men/6.jpg",
+    name: "Oluwaseun Balogun",
+    location: "Ibadan, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Oluwaseun+Balogun&background=3b82f6&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Top-notch service! The ticket looked completely authentic and was accepted without any questions. Will definitely recommend to friends."
+    comment: "Top-notch service! I was skeptical at first, but DummAir proved me wrong. The ticket looked completely authentic and my visa was approved. Thank you so much!"
   },
   {
     id: 7,
-    name: "Yuki Tanaka",
-    location: "Tokyo, Japan",
-    image: "https://randomuser.me/api/portraits/women/7.jpg",
+    name: "Mohammed Al-Rashid",
+    location: "Dubai, UAE",
+    image: "https://ui-avatars.com/api/?name=Mohammed+AlRashid&background=059669&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Super fast delivery and excellent quality. The customer service team was very responsive to all my queries. Perfect for visa purposes!"
+    comment: "Super fast delivery and excellent quality. The customer service team was very responsive to all my queries. Perfect for visa purposes and embassy requirements!"
   },
   {
     id: 8,
-    name: "David Miller",
-    location: "Sydney, Australia",
-    image: "https://randomuser.me/api/portraits/men/8.jpg",
+    name: "Blessing Okoro",
+    location: "Enugu, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Blessing+Okoro&background=dc2626&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Incredible service! The whole process was seamless from booking to delivery. My visa application was approved with their ticket."
+    comment: "Incredible service! The whole process was seamless from booking to delivery. I received my ticket in less than 1 hour and used it for my Dubai visa. Approved!"
   },
   {
     id: 9,
-    name: "Sofia Martinez",
-    location: "Mexico City, Mexico",
-    image: "https://randomuser.me/api/portraits/women/9.jpg",
+    name: "Emma Chen",
+    location: "Singapore",
+    image: "https://ui-avatars.com/api/?name=Emma+Chen&background=f97316&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Very impressed with the quality and speed. Got my dummy ticket within an hour and it was perfect for my documentation needs."
+    comment: "Very impressed with the quality and speed. Got my dummy ticket within an hour and it was perfect for my documentation needs. Will recommend to friends!"
   },
   {
     id: 10,
-    name: "Ahmed Hassan",
-    location: "Cairo, Egypt",
-    image: "https://randomuser.me/api/portraits/men/10.jpg",
+    name: "Emeka Nwosu",
+    location: "Owerri, Nigeria",
+    image: "https://ui-avatars.com/api/?name=Emeka+Nwosu&background=6366f1&color=fff&size=200&bold=true",
     rating: 5,
-    comment: "Outstanding service! Professional, fast, and reliable. The ticket was exactly what I needed for my visa interview. Thank you DummAir!"
+    comment: "Outstanding service! Professional, fast, and reliable. Used it for my UK visa interview and it was exactly what I needed. DummAir is the real deal!"
   }
 ];
 
