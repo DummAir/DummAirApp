@@ -14,11 +14,20 @@ export const metadata: Metadata = {
     description: "Get verifiable dummy flight tickets for visa applications, proof of travel, or documentation purposes.",
     type: "website",
     locale: "en_US",
+    images: [
+      {
+        url: '/icon.png',
+        width: 1200,
+        height: 630,
+        alt: 'DummAir Logo',
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "DummAir - Verifiable Dummy Flight Tickets",
     description: "Get verifiable dummy flight tickets for visa applications, proof of travel, or documentation purposes.",
+    images: ['/icon.png'],
   },
   viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
@@ -31,9 +40,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-      </head>
       <body className={inter.className}>
         {children}
       </body>
