@@ -18,81 +18,81 @@ const testimonials: Testimonial[] = [
     id: 1,
     name: "Chioma Okafor",
     location: "Lagos, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Chioma+Okafor&background=2472e0&color=fff&size=200&bold=true",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chioma&backgroundColor=2472e0",
     rating: 5,
-    comment: "Absolutely fantastic service! Got my dummy ticket within 30 minutes for my UK visa application. The process was very smooth and professional. Highly recommended!"
+    comment: "Absolutely fantastic service! Got my dummy ticket within 30 minutes for my UK visa application. The immigration officer at Heathrow also accepted it as proof of return. Highly recommended!"
   },
   {
     id: 2,
     name: "Adebayo Adeleke",
     location: "Abuja, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Adebayo+Adeleke&background=10b981&color=fff&size=200&bold=true",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Adebayo&backgroundColor=10b981",
     rating: 5,
-    comment: "Very professional and quick service! I needed a flight reservation for my Canadian visa, and DummAir delivered within an hour. The embassy accepted it without any issues!"
+    comment: "Very professional service! I used DummAir for my Canadian visa and also presented it at Toronto airport as proof of return. Immigration accepted it without any issues!"
   },
   {
     id: 3,
-    name: "Sarah Johnson",
-    location: "New York, USA",
-    image: "https://ui-avatars.com/api/?name=Sarah+Johnson&background=f59e0b&color=fff&size=200&bold=true",
+    name: "Ngozi Eze",
+    location: "Port Harcourt, Nigeria",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ngozi&backgroundColor=8b5cf6",
     rating: 5,
-    comment: "Excellent service! The booking process was smooth, and customer support was very helpful. Got my ticket delivered on time for my Schengen visa."
+    comment: "Best dummy ticket service! I used it for my US visa application and the embassy accepted it. Also showed it at the airport as proof of onward travel. God bless DummAir!"
   },
   {
     id: 4,
-    name: "Ngozi Eze",
-    location: "Port Harcourt, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Ngozi+Eze&background=8b5cf6&color=fff&size=200&bold=true",
+    name: "Sarah Johnson",
+    location: "New York, USA",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=f59e0b",
     rating: 5,
-    comment: "Best dummy ticket service I've used! Fast, reliable, and very affordable. Used it for my US visa application and it was verified successfully at the embassy. God bless DummAir!"
+    comment: "Excellent service! The booking process was smooth and customer support was very helpful. Used it as proof of return when entering Thailand. Immigration had no issues!"
   },
   {
     id: 5,
-    name: "Priya Patel",
-    location: "Mumbai, India",
-    image: "https://ui-avatars.com/api/?name=Priya+Patel&background=ec4899&color=fff&size=200&bold=true",
+    name: "Oluwaseun Balogun",
+    location: "Ibadan, Nigeria",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Oluwaseun&backgroundColor=3b82f6",
     rating: 5,
-    comment: "Amazing experience! Got my flight reservation for visa application in just 20 minutes. Very professional and trustworthy service. Will definitely use again!"
+    comment: "Top-notch service! I was skeptical at first, but DummAir delivered. Used it for my UK visa and also at Dubai airport for proof of return. Immigration accepted it immediately!"
   },
   {
     id: 6,
-    name: "Oluwaseun Balogun",
-    location: "Ibadan, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Oluwaseun+Balogun&background=3b82f6&color=fff&size=200&bold=true",
+    name: "Blessing Okoro",
+    location: "Enugu, Nigeria",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Blessing&backgroundColor=dc2626",
     rating: 5,
-    comment: "Top-notch service! I was skeptical at first, but DummAir proved me wrong. The ticket looked completely authentic and my visa was approved. Thank you so much!"
+    comment: "Incredible service! Got my ticket in less than 1 hour and used it for Dubai visa. At the port of entry in Dubai, they checked my return ticket and DummAir's reservation was perfect!"
   },
   {
     id: 7,
     name: "Mohammed Al-Rashid",
     location: "Dubai, UAE",
-    image: "https://ui-avatars.com/api/?name=Mohammed+AlRashid&background=059669&color=fff&size=200&bold=true",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mohammed&backgroundColor=059669",
     rating: 5,
-    comment: "Super fast delivery and excellent quality. The customer service team was very responsive to all my queries. Perfect for visa purposes and embassy requirements!"
+    comment: "Super fast delivery and excellent quality. Used it for embassy requirements and also as proof of onward journey. Immigration officers had no questions. Highly professional!"
   },
   {
     id: 8,
-    name: "Blessing Okoro",
-    location: "Enugu, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Blessing+Okoro&background=dc2626&color=fff&size=200&bold=true",
+    name: "Emeka Nwosu",
+    location: "Owerri, Nigeria",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emeka&backgroundColor=6366f1",
     rating: 5,
-    comment: "Incredible service! The whole process was seamless from booking to delivery. I received my ticket in less than 1 hour and used it for my Dubai visa. Approved!"
+    comment: "Outstanding! Used it for my UK visa interview and also showed it at Heathrow as proof of return flight. Both embassy and immigration accepted it. DummAir is the real deal!"
   },
   {
     id: 9,
-    name: "Emma Chen",
-    location: "Singapore",
-    image: "https://ui-avatars.com/api/?name=Emma+Chen&background=f97316&color=fff&size=200&bold=true",
+    name: "Priya Patel",
+    location: "Mumbai, India",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ec4899",
     rating: 5,
-    comment: "Very impressed with the quality and speed. Got my dummy ticket within an hour and it was perfect for my documentation needs. Will recommend to friends!"
+    comment: "Amazing! Got my flight reservation in 20 minutes for Schengen visa. Also used it at Amsterdam airport immigration for proof of onward travel. Very professional service!"
   },
   {
     id: 10,
-    name: "Emeka Nwosu",
-    location: "Owerri, Nigeria",
-    image: "https://ui-avatars.com/api/?name=Emeka+Nwosu&background=6366f1&color=fff&size=200&bold=true",
+    name: "Tunde Bakare",
+    location: "Kano, Nigeria",
+    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tunde&backgroundColor=f97316",
     rating: 5,
-    comment: "Outstanding service! Professional, fast, and reliable. Used it for my UK visa interview and it was exactly what I needed. DummAir is the real deal!"
+    comment: "Excellent service! Used DummAir for my visa application and later presented it at the port of entry in London as proof of return. Immigration approved it instantly. Worth every kobo!"
   }
 ];
 
@@ -159,12 +159,12 @@ export default function Testimonials() {
 
               {/* Reviewer Info */}
               <div className="flex flex-col items-center">
-                <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden mb-4 ring-4 ring-[#2472e0] ring-opacity-20">
-                  <Image
+                <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden mb-4 ring-4 ring-[#2472e0] ring-opacity-20 bg-gradient-to-br from-[#2472e0] to-[#1e5bb8]">
+                  <img
                     src={currentTestimonial.image}
                     alt={currentTestimonial.name}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <h4 className="text-[#111417] font-semibold text-lg">
