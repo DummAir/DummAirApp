@@ -9,6 +9,14 @@ export const metadata: Metadata = {
   description: "Get verifiable dummy flight tickets for visa applications, proof of travel, or documentation purposes. Fast, reliable, and professional service.",
   keywords: "dummy flight tickets, fake flight tickets, visa application, travel documentation, flight booking",
   authors: [{ name: "DummAir" }],
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { url: '/DummAir Logo Design.png', type: 'image/png' },
+    ],
+    shortcut: '/DummAir Logo Design.png',
+    apple: '/DummAir Logo Design.png',
+  },
   openGraph: {
     title: "DummAir - Verifiable Dummy Flight Tickets",
     description: "Get verifiable dummy flight tickets for visa applications, proof of travel, or documentation purposes.",
@@ -16,7 +24,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: '/icon.png',
+        url: '/DummAir Logo Design.png',
         width: 1200,
         height: 630,
         alt: 'DummAir Logo',
@@ -27,7 +35,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "DummAir - Verifiable Dummy Flight Tickets",
     description: "Get verifiable dummy flight tickets for visa applications, proof of travel, or documentation purposes.",
-    images: ['/icon.png'],
+    images: ['/DummAir Logo Design.png'],
   },
   viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
@@ -40,6 +48,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/DummAir Logo Design.png" type="image/png" />
+        <link rel="shortcut icon" href="/DummAir Logo Design.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/DummAir Logo Design.png" />
+      </head>
       <body className={inter.className}>
         {children}
       </body>
