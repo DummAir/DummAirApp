@@ -33,7 +33,8 @@ export default function PaymentPage() {
     
     try {
       const numberOfTravelers = state.flightDetails?.numberOfTravelers || 1;
-      const basePrice = state.flightType === 'one-way' ? 25 : 45;
+      // 20% OFF Launch Promo: One-way $20 (was $25), Round-trip $36 (was $45)
+      const basePrice = state.flightType === 'one-way' ? 20 : 36;
       const totalAmount = basePrice * numberOfTravelers;
 
       const firstPassenger = state.passengerDetails[0];
@@ -127,7 +128,8 @@ export default function PaymentPage() {
 
   const getTotalPrice = () => {
     const numberOfTravelers = state.flightDetails?.numberOfTravelers || 1;
-    const basePrice = state.flightType === 'one-way' ? 25 : 45;
+    // 20% OFF Launch Promo: One-way $20 (was $25), Round-trip $36 (was $45)
+    const basePrice = state.flightType === 'one-way' ? 20 : 36;
     return basePrice * numberOfTravelers;
   };
 

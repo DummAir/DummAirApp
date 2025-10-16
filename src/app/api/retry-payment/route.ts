@@ -52,8 +52,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate amount (same logic as booking flow)
-    const basePrice = order.flight_type === 'one-way' ? 25 : 45;
+    // Calculate amount (same logic as booking flow) - 20% OFF Launch Promo
+    // Original: One-way $25, Round-trip $45
+    // Promo: One-way $20, Round-trip $36
+    const basePrice = order.flight_type === 'one-way' ? 20 : 36;
     const amount = basePrice * order.number_of_travelers;
 
     // Prepare flight details text

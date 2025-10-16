@@ -17,8 +17,10 @@ export async function POST(request: NextRequest) {
     console.log('🔑 User ID from client:', userId);
     console.log('📧 Guest Email:', passengers[0]?.email);
 
-    // Calculate payment amount
-    const basePrice = flightType === 'one-way' ? 25 : 45;
+    // Calculate payment amount - 20% OFF Launch Promo
+    // Original: One-way $25, Round-trip $45
+    // Promo: One-way $20, Round-trip $36
+    const basePrice = flightType === 'one-way' ? 20 : 36;
     const numberOfTravelers = flight.numberOfTravelers || 1;
     const paymentAmount = basePrice * numberOfTravelers;
 
