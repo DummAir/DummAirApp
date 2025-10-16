@@ -38,8 +38,8 @@ export async function createStripeCheckoutSession(data: {
       },
     ],
     mode: 'payment',
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/confirmation?orderId=${data.orderId}&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/book`,
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/confirmation?orderId=${data.orderId}&provider=stripe&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-cancelled?orderId=${data.orderId}&provider=stripe`,
     customer_email: data.customerEmail,
     metadata: {
       orderId: data.orderId,

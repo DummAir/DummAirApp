@@ -29,7 +29,9 @@ export async function initializeFlutterwavePayment(data: {
   const txRef = `DUM-${Date.now()}-${Math.random().toString(36).substring(7)}`;
 
   const redirectUrl = `${appUrl}/confirmation?orderId=${data.orderId}&provider=flutterwave&tx_ref=${txRef}`;
+  const cancelUrl = `${appUrl}/payment-cancelled?orderId=${data.orderId}&provider=flutterwave`;
   console.log('🟣 Flutterwave: Redirect URL:', redirectUrl);
+  console.log('🟣 Flutterwave: Cancel URL:', cancelUrl);
 
   const requestBody = {
     tx_ref: txRef,
@@ -37,6 +39,7 @@ export async function initializeFlutterwavePayment(data: {
     currency: 'USD',
     redirect_url: redirectUrl,
     payment_options: 'card',
+    cancel_url: cancelUrl,
     customer: {
       email: data.customerEmail,
       name: data.customerName,

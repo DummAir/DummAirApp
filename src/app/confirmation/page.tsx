@@ -18,7 +18,7 @@ function ConfirmationContent() {
 
   useEffect(() => {
     checkAuthentication();
-    updateOrderStatus();
+    verifyAndUpdatePayment();
     fetchOrderEmail();
     fetchOrderNumber();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,13 +70,19 @@ function ConfirmationContent() {
     }
   };
 
-  const updateOrderStatus = async () => {
-    if (!orderId) return;
+  const verifyAndUpdatePayment = async () => {
+    if (!orderId) {
+      console.error('❌ No orderId provided');
+      window.location.href = '/dashboard';
+      return;
+    }
 
     try {
-      // First check if order is already paid to prevent duplicate emails
-      console.log('🔍 Checking order status before sending emails...');
+      console.log('🔍 Verifying payment before marking as paid...');
+      console.log('   Order ID:', orderId);
+      console.log('   Provider:', provider);
       
+      // First check if order is already paid
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .select('status, order_number')
@@ -85,19 +91,86 @@ function ConfirmationContent() {
 
       if (orderError) {
         console.error('❌ Failed to fetch order:', orderError);
+        window.location.href = '/dashboard';
         return;
       }
 
       if (orderData.status === 'paid' || orderData.status === 'completed') {
         console.log('ℹ️ Order already marked as paid. Skipping webhook to prevent duplicate emails.');
-        console.log('   Current status:', orderData.status);
         return;
       }
 
-      console.log('🔄 Order status is:', orderData.status);
-      console.log('🔄 Calling payment-success webhook...');
-      console.log('   Order ID:', orderId);
-      console.log('   Provider:', provider);
+      // VERIFY PAYMENT WITH PAYMENT GATEWAY
+      let paymentVerified = false;
+
+      if (provider === 'flutterwave') {
+        const txRef = searchParams.get('tx_ref');
+        const transactionId = searchParams.get('transaction_id');
+        
+        console.log('🟣 Flutterwave: Verifying transaction...');
+        console.log('   tx_ref:', txRef);
+        console.log('   transaction_id:', transactionId);
+
+        if (txRef || transactionId) {
+          // Call verification API
+          const verifyResponse = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: 'flutterwave',
+              txRef,
+              transactionId,
+              orderId,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+          
+          if (verifyResponse.ok && verifyData.verified) {
+            paymentVerified = true;
+            console.log('✅ Flutterwave: Payment verified!');
+          } else {
+            console.error('❌ Flutterwave: Payment verification failed:', verifyData);
+          }
+        }
+      } else if (provider === 'stripe') {
+        const sessionId = searchParams.get('session_id');
+        
+        console.log('🔵 Stripe: Verifying session...');
+        console.log('   session_id:', sessionId);
+
+        if (sessionId) {
+          // Call verification API
+          const verifyResponse = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: 'stripe',
+              sessionId,
+              orderId,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+          
+          if (verifyResponse.ok && verifyData.verified) {
+            paymentVerified = true;
+            console.log('✅ Stripe: Payment verified!');
+          } else {
+            console.error('❌ Stripe: Payment verification failed:', verifyData);
+          }
+        }
+      }
+
+      // If payment not verified, redirect to cancelled page
+      if (!paymentVerified) {
+        console.error('❌ Payment not verified! Redirecting to cancelled page...');
+        window.location.href = `/payment-cancelled?orderId=${orderId}&provider=${provider}`;
+        return;
+      }
+
+      // Payment verified - now update order status
+      console.log('🔄 Payment verified! Calling payment-success webhook...');
       
       const response = await fetch('/api/webhooks/payment-success', {
         method: 'POST',
@@ -113,16 +186,17 @@ function ConfirmationContent() {
 
       const data = await response.json();
       
-      console.log('✅ Webhook response:', response.status, data);
-      
       if (!response.ok) {
         console.error('❌ Webhook failed:', data);
-      } else {
-        console.log('✅ Order status updated to paid');
-        console.log('✅ Confirmation emails sent (client + admin)!');
+        throw new Error('Failed to update order status');
       }
+      
+      console.log('✅ Order status updated to paid');
+      console.log('✅ Confirmation emails sent!');
+      
     } catch (error) {
-      console.error('❌ Failed to update order status:', error);
+      console.error('❌ Payment verification error:', error);
+      window.location.href = `/payment-cancelled?orderId=${orderId}&provider=${provider}`;
     }
   };
 
