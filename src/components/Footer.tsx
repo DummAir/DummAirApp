@@ -130,17 +130,35 @@ export default function Footer() {
               © {currentYear} DummAir. All rights reserved.
             </p>
             <div className="flex items-center space-x-6">
-              <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
-                Facebook
-              </Link>
-              <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+              <Link 
+                href="https://x.com/dummairapp?s=21" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#9ca3af] hover:text-white transition-colors text-sm"
+              >
                 Twitter
               </Link>
-              <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
+              <Link 
+                href="https://www.instagram.com/dummairapp?igsh=bWtva2U0amNqNjhm&utm_source=qr" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#9ca3af] hover:text-white transition-colors text-sm"
+              >
                 Instagram
               </Link>
-              <Link href="#" className="text-[#9ca3af] hover:text-white transition-colors text-sm">
-                LinkedIn
+              <Link 
+                href="mailto:support@dummair.com" 
+                className="text-[#9ca3af] hover:text-white transition-colors text-sm"
+              >
+                Email
+              </Link>
+              <Link 
+                href="https://wa.me/14099047084" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#9ca3af] hover:text-white transition-colors text-sm"
+              >
+                WhatsApp
               </Link>
             </div>
           </div>
