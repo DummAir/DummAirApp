@@ -72,6 +72,12 @@ export default function BookingReview() {
   };
 
   const getBasePrice = () => {
+    // Original prices: One-way $25, Round trip $45
+    // 20% OFF Launch Promo: One-way $20, Round trip $36
+    return state.flightType === 'one-way' ? 20 : 36;
+  };
+
+  const getOriginalPrice = () => {
     return state.flightType === 'one-way' ? 25 : 45;
   };
 
@@ -374,11 +380,20 @@ export default function BookingReview() {
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute top-4 right-4 bg-[#ffc107] text-[#111417] font-bold px-4 py-2 rounded-full text-sm shadow-lg animate-pulse">
+                  🎉 20% OFF Launch Promo
+                </div>
                 <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                   <p className="text-white/80 text-sm mb-1">Total Amount</p>
-                  <h3 className="text-4xl font-bold">${getTotalPrice()}</h3>
-                  <p className="text-white/70 text-sm mt-1">
+                  <div className="flex items-baseline gap-3 mb-1">
+                    <span className="text-2xl line-through text-white/50">${getOriginalPrice() * (state.flightDetails?.numberOfTravelers || 1)}</span>
+                    <h3 className="text-4xl font-bold">${getTotalPrice()}</h3>
+                  </div>
+                  <p className="text-white/70 text-sm">
                     {state.flightDetails?.numberOfTravelers || 1} × ${getBasePrice()} per ticket
+                  </p>
+                  <p className="text-[#ffc107] text-xs font-semibold mt-2">
+                    You save ${(getOriginalPrice() - getBasePrice()) * (state.flightDetails?.numberOfTravelers || 1)}!
                   </p>
                 </div>
               </div>

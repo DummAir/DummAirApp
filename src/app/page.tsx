@@ -18,6 +18,15 @@ export default function Home() {
 
   return (
     <div className="relative flex flex-col min-h-screen bg-white">
+      {/* Launch Promo Banner */}
+      <div className="bg-gradient-to-r from-[#ffc107] via-[#ffb300] to-[#ffc107] text-[#111417] py-3 px-4 text-center font-bold text-sm md:text-base animate-gradient">
+        <span className="inline-flex items-center gap-2">
+          🎉 <span className="font-extrabold">LAUNCH PROMO:</span> Get 20% OFF on ALL bookings! 
+          <span className="hidden sm:inline">Pay only $20 instead of $25</span> 
+          <span className="inline sm:hidden">$20 (was $25)</span>
+        </span>
+      </div>
+      
       {/* Header */}
       <Header />
 
@@ -74,9 +83,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Link
                   href="/book"
-                  className="px-8 py-4 bg-white text-[#2472e0] rounded-lg font-bold text-lg hover:bg-gray-100 transition-all hover:shadow-xl hover:scale-105 text-center"
+                  className="relative px-8 py-4 bg-white text-[#2472e0] rounded-lg font-bold text-lg hover:bg-gray-100 transition-all hover:shadow-xl hover:scale-105 text-center overflow-hidden group"
                 >
-                  Book Now - From $25
+                  <span className="absolute top-2 right-2 bg-[#ffc107] text-[#111417] text-xs font-bold px-2 py-1 rounded">
+                    20% OFF
+                  </span>
+                  <span className="text-sm line-through text-[#647287] block">From $25</span>
+                  <span className="text-xl">Book Now - From $20</span>
                 </Link>
                 <a
                   href="#how-it-works"
@@ -99,10 +112,16 @@ export default function Home() {
                 />
                 {/* Overlay Card */}
                 <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-xl">
+                  <div className="absolute -top-3 -right-3 bg-[#ffc107] text-[#111417] font-bold px-3 py-1 rounded-full text-sm shadow-lg animate-pulse">
+                    🎉 20% OFF
+                  </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[#647287] text-sm mb-1">Starting from</p>
-                      <p className="text-[#2472e0] text-3xl font-bold">$25</p>
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-[#647287] text-lg line-through">$25</p>
+                        <p className="text-[#2472e0] text-3xl font-bold">$20</p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-[#647287] text-sm mb-1">Delivery time</p>
