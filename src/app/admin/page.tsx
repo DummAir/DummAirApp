@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Package, Users, DollarSign, TrendingUp, LogOut, Search } from 'lucide-react';
+import { Package, Users, DollarSign, TrendingUp, LogOut, Search, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 
 interface Order {
@@ -144,6 +144,17 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Navigation */}
+        <div className="mb-8">
+          <Link 
+            href="/admin/analytics"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#2472e0] text-white rounded-lg hover:bg-[#1e5bb8] transition-colors"
+          >
+            <BarChart3 size={20} />
+            <span>View Analytics Dashboard</span>
+          </Link>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl p-6 shadow-sm">
