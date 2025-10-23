@@ -194,6 +194,11 @@ function ConfirmationContent() {
       console.log('✅ Order status updated to paid');
       console.log('✅ Confirmation emails sent!');
       
+      // Track successful conversion
+      if (typeof window !== 'undefined' && (window as any).analytics) {
+        (window as any).analytics.trackConversion('payment_success', 4, provider, undefined, true, orderId);
+      }
+      
     } catch (error) {
       console.error('❌ Payment verification error:', error);
       window.location.href = `/payment-cancelled?orderId=${orderId}&provider=${provider}`;
@@ -212,6 +217,12 @@ function ConfirmationContent() {
   const handleWhatsAppClick = () => {
     const supportNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+14099047084';
     const message = encodeURIComponent(`Hi! I just booked a ticket (order ${orderNumber || 'DUM-xxxx'})`);
+    
+    // Track WhatsApp click
+    if (typeof window !== 'undefined' && (window as any).analytics) {
+      (window as any).analytics.trackWhatsAppClick(orderId, 'support');
+    }
+    
     window.open(`https://wa.me/${supportNumber}?text=${message}`, '_blank');
   };
 

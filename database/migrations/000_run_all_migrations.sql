@@ -46,6 +46,7 @@
 -- STEP 9: Create Email Verification Tokens Table
 -- ============================================================================
 \i 009_add_email_verification.sql
+\i 010_create_analytics_tables.sql
 
 -- ============================================================================
 -- STEP 10: Create Admin User (Default)

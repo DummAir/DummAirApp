@@ -48,6 +48,11 @@ export default function PaymentPage() {
       
       console.log('🔑 Current User ID:', currentUserId);
       console.log('📧 User Email:', sessionData?.user?.email);
+
+      // Track payment attempt
+      if (typeof window !== 'undefined' && (window as any).analytics) {
+        (window as any).analytics.trackConversion('payment_attempt', 3, selectedProvider, totalAmount, false);
+      }
       
       const orderResponse = await fetch('/api/orders', {
         method: 'POST',
