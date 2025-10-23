@@ -24,10 +24,6 @@ export async function POST(request: NextRequest) {
         const sessionSuccess = await analyticsService.trackSession(data);
         return NextResponse.json({ success: sessionSuccess });
       
-      case 'email_event':
-        const emailSuccess = await analyticsService.trackEmailEvent(data);
-        return NextResponse.json({ success: emailSuccess });
-      
       case 'whatsapp_event':
         const whatsappSuccess = await analyticsService.trackWhatsAppEvent(data);
         return NextResponse.json({ success: whatsappSuccess });

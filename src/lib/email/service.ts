@@ -4,7 +4,6 @@
  */
 
 import { createServiceClient } from '@/lib/supabase/server';
-import { analyticsService } from '@/lib/analytics/service';
 
 export interface EmailPayload {
   to: string;
@@ -181,26 +180,12 @@ export async function sendAndLogEmail(
   const result = await sendEmail(payload);
 
   // Log the email attempt
-  const logResult = await logEmail({
+  await logEmail({
     ...logData,
     status: result.success ? 'sent' : 'failed',
     providerId: result.messageId,
     errorMessage: result.error,
   });
-
-  // Track email event in analytics
-  if (result.success && result.messageId) {
-    try {
-      await analyticsService.trackEmailEvent({
-        emailLogId: result.messageId, // Using messageId as reference
-        eventType: 'sent',
-        recipientEmail: logData.recipient,
-        emailType: logData.emailType,
-      });
-    } catch (error) {
-      console.error('Analytics: Failed to track email event:', error);
-    }
-  }
 
   return result;
 }

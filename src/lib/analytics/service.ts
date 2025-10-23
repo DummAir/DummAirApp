@@ -50,15 +50,6 @@ export interface ConversionData {
   errorMessage?: string;
 }
 
-export interface EmailEventData {
-  emailLogId: string;
-  eventType: string;
-  recipientEmail: string;
-  emailType?: string;
-  campaignId?: string;
-  metadata?: Record<string, any>;
-}
-
 export interface WhatsAppEventData {
   sessionId: string;
   userId?: string;
@@ -196,32 +187,6 @@ class AnalyticsService {
       return true;
     } catch (error) {
       console.error('Analytics: Conversion tracking error:', error);
-      return false;
-    }
-  }
-
-  // Email event tracking
-  async trackEmailEvent(data: EmailEventData): Promise<boolean> {
-    try {
-      const { error } = await this.supabase
-        .from('analytics_email_events')
-        .insert({
-          email_log_id: data.emailLogId,
-          event_type: data.eventType,
-          recipient_email: data.recipientEmail,
-          email_type: data.emailType,
-          campaign_id: data.campaignId,
-          metadata: data.metadata,
-        });
-
-      if (error) {
-        console.error('Analytics: Failed to track email event:', error);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Analytics: Email event tracking error:', error);
       return false;
     }
   }

@@ -78,13 +78,6 @@ export async function GET(request: NextRequest) {
       .gte('created_at', start)
       .lte('created_at', end);
 
-    // Get email events
-    const { data: emailEvents, error: emailEventsError } = await supabase
-      .from('analytics_email_events')
-      .select('*')
-      .gte('timestamp', start)
-      .lte('timestamp', end);
-
     // Get WhatsApp events
     const { data: whatsappEvents, error: whatsappEventsError } = await supabase
       .from('analytics_whatsapp_events')
@@ -142,13 +135,6 @@ export async function GET(request: NextRequest) {
     const flutterwaveRevenue = ordersData?.filter(order => order.payment_provider === 'flutterwave' && order.status === 'paid')
       .reduce((sum, order) => sum + Number(order.payment_amount), 0) || 0;
 
-    // Email metrics
-    const emailSent = emailEvents?.filter(event => event.event_type === 'sent').length || 0;
-    const emailOpened = emailEvents?.filter(event => event.event_type === 'opened').length || 0;
-    const emailClicked = emailEvents?.filter(event => event.event_type === 'clicked').length || 0;
-    const emailOpenRate = emailSent > 0 ? (emailOpened / emailSent) * 100 : 0;
-    const emailClickRate = emailSent > 0 ? (emailClicked / emailSent) * 100 : 0;
-
     // WhatsApp metrics
     const whatsappClicks = whatsappEvents?.filter(event => event.event_type === 'click').length || 0;
 
@@ -195,13 +181,6 @@ export async function GET(request: NextRequest) {
           totalAttempts: conversionData?.length || 0,
           successRate: conversionData?.length > 0 ? 
             (conversionData.filter(c => c.success).length / conversionData.length) * 100 : 0,
-        },
-        email: {
-          sent: emailSent,
-          opened: emailOpened,
-          clicked: emailClicked,
-          openRate: Math.round(emailOpenRate * 100) / 100,
-          clickRate: Math.round(emailClickRate * 100) / 100,
         },
         whatsapp: {
           clicks: whatsappClicks,

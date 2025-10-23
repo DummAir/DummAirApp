@@ -60,13 +60,6 @@ interface AnalyticsData {
     totalAttempts: number;
     successRate: number;
   };
-  email: {
-    sent: number;
-    opened: number;
-    clicked: number;
-    openRate: number;
-    clickRate: number;
-  };
   whatsapp: {
     clicks: number;
   };
@@ -316,59 +309,30 @@ export default function AnalyticsDashboard() {
         </div>
       </div>
 
-      {/* Email & WhatsApp Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-[#dce0e5]">
-          <h3 className="text-lg font-semibold text-[#111417] mb-4">Email Performance</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Mail className="h-4 w-4 text-blue-500" />
-                <span className="text-[#647287]">Emails Sent</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatNumber(data.email.sent)}</span>
+      {/* WhatsApp Analytics */}
+      <div className="bg-white rounded-xl shadow-sm p-6 border border-[#dce0e5]">
+        <h3 className="text-lg font-semibold text-[#111417] mb-4">WhatsApp Analytics</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <MessageCircle className="h-4 w-4 text-green-500" />
+              <span className="text-[#647287]">WhatsApp Clicks</span>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <Eye className="h-4 w-4 text-green-500" />
-                <span className="text-[#647287]">Open Rate</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatPercentage(data.email.openRate)}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <MousePointer className="h-4 w-4 text-purple-500" />
-                <span className="text-[#647287]">Click Rate</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatPercentage(data.email.clickRate)}</span>
-            </div>
+            <span className="font-semibold text-[#111417]">{formatNumber(data.whatsapp.clicks)}</span>
           </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-[#dce0e5]">
-          <h3 className="text-lg font-semibold text-[#111417] mb-4">WhatsApp Analytics</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <MessageCircle className="h-4 w-4 text-green-500" />
-                <span className="text-[#647287]">WhatsApp Clicks</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatNumber(data.whatsapp.clicks)}</span>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <RefreshCw className="h-4 w-4 text-orange-500" />
+              <span className="text-[#647287]">Refunds</span>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <RefreshCw className="h-4 w-4 text-orange-500" />
-                <span className="text-[#647287]">Refunds</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatNumber(data.overview.refunds)}</span>
+            <span className="font-semibold text-[#111417]">{formatNumber(data.overview.refunds)}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4 text-red-500" />
+              <span className="text-[#647287]">Refund Amount</span>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-2">
-                <DollarSign className="h-4 w-4 text-red-500" />
-                <span className="text-[#647287]">Refund Amount</span>
-              </div>
-              <span className="font-semibold text-[#111417]">{formatCurrency(data.overview.refundAmount)}</span>
-            </div>
+            <span className="font-semibold text-[#111417]">{formatCurrency(data.overview.refundAmount)}</span>
           </div>
         </div>
       </div>
