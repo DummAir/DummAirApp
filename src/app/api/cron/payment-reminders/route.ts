@@ -2,6 +2,9 @@
  * Payment Reminder Cron Job
  * This endpoint should be called periodically (e.g., daily) via Vercel Cron or external scheduler
  * It sends reminder emails to users with pending payment orders
+ * 
+ * LIMIT: Only sends maximum 2 reminders per order within 24 hours
+ * After 2 reminders, no more emails are sent for that order
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -55,7 +58,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log(`📧 Found ${pendingOrders.length} pending orders to remind`);
+    console.log(`📧 Found ${pendingOrders.length} pending orders to check for reminders (max 2 per order in 24h)`);
 
     let sentCount = 0;
     let errorCount = 0;
@@ -63,16 +66,38 @@ export async function GET(request: NextRequest) {
     // Process each pending order
     for (const order of pendingOrders) {
       try {
-        // Check if reminder was already sent today
-        const { data: existingReminder } = await supabase
+        // Check how many reminders have been sent in the last 24 hours
+        const twentyFourHoursAgo = new Date();
+        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+
+        const { data: recentReminders, error: reminderError } = await supabase
           .from('email_logs')
           .select('*')
           .eq('order_id', order.id)
           .eq('email_type', 'payment_reminder')
-          .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
-          .single();
+          .gte('created_at', twentyFourHoursAgo.toISOString())
+          .order('created_at', { ascending: false });
 
-        if (existingReminder) {
+        if (reminderError) {
+          console.error(`❌ Failed to check reminders for order ${order.order_number}:`, reminderError);
+          continue;
+        }
+
+        // Only send if less than 2 reminders sent in last 24 hours
+        if (recentReminders && recentReminders.length >= 2) {
+          console.log(`⏭️ Maximum reminders (2) already sent for order ${order.order_number} in last 24 hours`);
+          continue;
+        }
+
+        // Check if reminder was already sent today (to prevent duplicate sends in same day)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const todayReminder = recentReminders?.find(reminder => 
+          new Date(reminder.created_at) >= today
+        );
+
+        if (todayReminder) {
           console.log(`⏭️ Reminder already sent today for order ${order.order_number}`);
           continue;
         }
