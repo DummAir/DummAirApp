@@ -192,7 +192,7 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
   // Expose tracking functions to window for global access
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as Record<string, unknown>).analytics = {
+      (window as unknown as Record<string, unknown>).analytics = {
         trackEvent,
         trackConversion,
         trackWhatsAppClick,

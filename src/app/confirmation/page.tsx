@@ -195,8 +195,8 @@ function ConfirmationContent() {
       console.log('✅ Confirmation emails sent!');
       
       // Track successful conversion
-      if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
-        const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
+      if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).analytics) {
+        const analytics = (window as unknown as Record<string, unknown>).analytics as Record<string, unknown>;
         if (typeof analytics.trackConversion === 'function') {
           (analytics.trackConversion as (step: string, order: number, provider?: string, amount?: number, success?: boolean, orderId?: string) => void)('payment_success', 4, provider, undefined, true, orderId);
         }
@@ -222,8 +222,8 @@ function ConfirmationContent() {
     const message = encodeURIComponent(`Hi! I just booked a ticket (order ${orderNumber || 'DUM-xxxx'})`);
     
     // Track WhatsApp click
-    if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
-      const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).analytics) {
+      const analytics = (window as unknown as Record<string, unknown>).analytics as Record<string, unknown>;
       if (typeof analytics.trackWhatsAppClick === 'function') {
         (analytics.trackWhatsAppClick as (orderId?: string, messageType?: string) => void)(orderId, 'support');
       }
