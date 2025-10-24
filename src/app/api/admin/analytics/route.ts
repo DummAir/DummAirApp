@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
         conversions: {
           funnel: funnelData,
           totalAttempts: conversionData?.length || 0,
-          successRate: conversionData?.length > 0 ? 
+          successRate: conversionData && conversionData.length > 0 ? 
             (conversionData.filter(c => c.success).length / conversionData.length) * 100 : 0,
         },
         whatsapp: {
