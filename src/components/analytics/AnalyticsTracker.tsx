@@ -75,7 +75,7 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to initialize session:', error);
     }
-  }, []);
+  }, [supabase.auth]);
 
   const trackSession = async (data: Record<string, unknown>) => {
     try {

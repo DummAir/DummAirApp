@@ -83,7 +83,7 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     checkAdmin();
-  }, []);
+  }, [checkAdmin]);
 
   useEffect(() => {
     if (user) {
@@ -91,7 +91,7 @@ export default function AnalyticsDashboard() {
     }
   }, [period, user, fetchAnalyticsData]);
 
-  const checkAdmin = async () => {
+  const checkAdmin = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
@@ -106,7 +106,7 @@ export default function AnalyticsDashboard() {
     }
 
     setUser(user);
-  };
+  }, [router]);
 
   const fetchAnalyticsData = useCallback(async () => {
     try {

@@ -53,7 +53,7 @@ export default function PaymentPage() {
       if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
         const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
         if (typeof analytics.trackConversion === 'function') {
-          (analytics.trackConversion as Function)('payment_attempt', 3, selectedProvider, totalAmount, false);
+          (analytics.trackConversion as (step: string, order: number, provider?: string, amount?: number, success?: boolean, orderId?: string) => void)('payment_attempt', 3, selectedProvider, totalAmount, false);
         }
       }
       

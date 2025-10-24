@@ -159,6 +159,7 @@ export default function Testimonials() {
               {/* Reviewer Info */}
               <div className="flex flex-col items-center">
                 <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden mb-4 ring-4 ring-[#2472e0] ring-opacity-20 bg-gradient-to-br from-[#2472e0] to-[#1e5bb8]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={currentTestimonial.image}
                     alt={currentTestimonial.name}
