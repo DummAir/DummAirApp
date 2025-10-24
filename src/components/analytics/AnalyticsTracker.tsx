@@ -15,24 +15,22 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
   const searchParams = useSearchParams();
   const supabase = createClientComponentClient();
 
-  useEffect(() => {
-    // Initialize session
-    initializeSession();
-  }, [initializeSession]);
-
-  useEffect(() => {
-    // Track page view when pathname changes
-    if (sessionId && isTracking) {
-      trackPageView();
+  const trackSession = async (data: Record<string, unknown>) => {
+    try {
+      await fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'session',
+          data,
+        }),
+      });
+    } catch (error) {
+      console.error('Analytics: Failed to track session:', error);
     }
-  }, [pathname, searchParams, sessionId, isTracking, trackPageView]);
-
-  useEffect(() => {
-    // Track checkout events
-    if (pathname.includes('/book') && searchParams.get('step') === '4') {
-      trackEvent('checkout_start', 'ecommerce', 'checkout', 'booking_review');
-    }
-  }, [pathname, searchParams, trackEvent]);
+  };
 
   const initializeSession = useCallback(async () => {
     try {
@@ -76,23 +74,6 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
       console.error('Analytics: Failed to initialize session:', error);
     }
   }, [supabase.auth]);
-
-  const trackSession = async (data: Record<string, unknown>) => {
-    try {
-      await fetch('/api/analytics/track', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'session',
-          data,
-        }),
-      });
-    } catch (error) {
-      console.error('Analytics: Failed to track session:', error);
-    }
-  };
 
   const trackPageView = useCallback(async () => {
     try {
@@ -189,6 +170,25 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     }
   }, [sessionId]);
 
+  useEffect(() => {
+    // Initialize session
+    initializeSession();
+  }, [initializeSession]);
+
+  useEffect(() => {
+    // Track page view when pathname changes
+    if (sessionId && isTracking) {
+      trackPageView();
+    }
+  }, [pathname, searchParams, sessionId, isTracking, trackPageView]);
+
+  useEffect(() => {
+    // Track checkout events
+    if (pathname.includes('/book') && searchParams.get('step') === '4') {
+      trackEvent('checkout_start', 'ecommerce', 'checkout', 'booking_review');
+    }
+  }, [pathname, searchParams, trackEvent]);
+
   // Expose tracking functions to window for global access
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -204,6 +204,7 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
   useEffect(() => {
     return () => {
       if (sessionId) {
+        // End session
         fetch('/api/analytics/track', {
           method: 'POST',
           headers: {
@@ -221,11 +222,12 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
   return <>{children}</>;
 }
 
-// Utility functions
+// Helper functions
 function getDeviceType(userAgent: string): string {
-  if (/Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+  if (/Mobile|Android|iPhone|iPad/.test(userAgent)) {
     return 'mobile';
-  } else if (/Tablet|iPad/i.test(userAgent)) {
+  }
+  if (/Tablet|iPad/.test(userAgent)) {
     return 'tablet';
   }
   return 'desktop';
@@ -236,7 +238,6 @@ function getBrowser(userAgent: string): string {
   if (userAgent.includes('Firefox')) return 'Firefox';
   if (userAgent.includes('Safari')) return 'Safari';
   if (userAgent.includes('Edge')) return 'Edge';
-  if (userAgent.includes('Opera')) return 'Opera';
   return 'Unknown';
 }
 
