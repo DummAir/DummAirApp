@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,9 +56,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/DummAir Logo Design.png" />
       </head>
       <body className={inter.className}>
-        <AnalyticsTracker>
-          {children}
-        </AnalyticsTracker>
+        <Suspense fallback={<div></div>}>
+          <AnalyticsTracker>
+            {children}
+          </AnalyticsTracker>
+        </Suspense>
       </body>
     </html>
   );
