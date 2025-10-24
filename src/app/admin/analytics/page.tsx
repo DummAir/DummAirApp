@@ -81,16 +81,6 @@ export default function AnalyticsDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<{ email?: string } | null>(null);
 
-  useEffect(() => {
-    checkAdmin();
-  }, [checkAdmin]);
-
-  useEffect(() => {
-    if (user) {
-      fetchAnalyticsData();
-    }
-  }, [period, user, fetchAnalyticsData]);
-
   const checkAdmin = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -106,7 +96,7 @@ export default function AnalyticsDashboard() {
     }
 
     setUser(user);
-  }, [router]);
+  }, [router, supabase.auth]);
 
   const fetchAnalyticsData = useCallback(async () => {
     try {
@@ -127,6 +117,16 @@ export default function AnalyticsDashboard() {
       setLoading(false);
     }
   }, [period]);
+
+  useEffect(() => {
+    checkAdmin();
+  }, [checkAdmin]);
+
+  useEffect(() => {
+    if (user) {
+      fetchAnalyticsData();
+    }
+  }, [period, user, fetchAnalyticsData]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
