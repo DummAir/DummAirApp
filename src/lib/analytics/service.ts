@@ -118,13 +118,21 @@ class AnalyticsService {
       }
 
       // Update session page view count
-      await this.supabase
+      const { data: sessionData } = await this.supabase
         .from('analytics_sessions')
-        .update({ 
-          page_views: this.supabase.raw('page_views + 1'),
-          updated_at: new Date().toISOString()
-        })
-        .eq('session_id', data.sessionId);
+        .select('page_views')
+        .eq('session_id', data.sessionId)
+        .single();
+
+      if (sessionData) {
+        await this.supabase
+          .from('analytics_sessions')
+          .update({ 
+            page_views: (sessionData.page_views || 0) + 1,
+            updated_at: new Date().toISOString()
+          })
+          .eq('session_id', data.sessionId);
+      }
 
       return true;
     } catch (error) {
