@@ -225,7 +225,7 @@ function ConfirmationContent() {
     if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).analytics) {
       const analytics = (window as unknown as Record<string, unknown>).analytics as Record<string, unknown>;
       if (typeof analytics.trackWhatsAppClick === 'function') {
-        (analytics.trackWhatsAppClick as (orderId?: string, messageType?: string) => void)(orderId, 'support');
+        (analytics.trackWhatsAppClick as (orderId?: string, messageType?: string) => void)(orderId || undefined, 'support');
       }
     }
     
