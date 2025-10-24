@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { 
@@ -12,7 +12,6 @@ import {
   MessageCircle,
   Eye,
   RefreshCw,
-  Calendar,
   Filter,
   ArrowLeft,
   LogOut
@@ -90,7 +89,7 @@ export default function AnalyticsDashboard() {
     if (user) {
       fetchAnalyticsData();
     }
-  }, [period, user]);
+  }, [period, user, fetchAnalyticsData]);
 
   const checkAdmin = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -109,7 +108,7 @@ export default function AnalyticsDashboard() {
     setUser(user);
   };
 
-  const fetchAnalyticsData = async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/admin/analytics?period=${period}`);
@@ -127,7 +126,7 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [period]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -230,7 +229,7 @@ export default function AnalyticsDashboard() {
                 <Filter className="h-5 w-5 text-[#647287]" />
                 <select
                   value={period}
-                  onChange={(e) => setPeriod(e.target.value as any)}
+                  onChange={(e) => setPeriod(e.target.value as 'daily' | 'weekly' | 'monthly' | 'yearly')}
                   className="px-3 py-2 border border-[#dce0e5] rounded-lg focus:ring-2 focus:ring-[#2472e0] focus:border-transparent bg-white text-[#111417]"
                 >
                   <option value="daily">Daily</option>

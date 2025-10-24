@@ -195,8 +195,11 @@ function ConfirmationContent() {
       console.log('✅ Confirmation emails sent!');
       
       // Track successful conversion
-      if (typeof window !== 'undefined' && (window as any).analytics) {
-        (window as any).analytics.trackConversion('payment_success', 4, provider, undefined, true, orderId);
+      if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
+        const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
+        if (typeof analytics.trackConversion === 'function') {
+          (analytics.trackConversion as Function)('payment_success', 4, provider, undefined, true, orderId);
+        }
       }
       
     } catch (error) {
@@ -219,8 +222,11 @@ function ConfirmationContent() {
     const message = encodeURIComponent(`Hi! I just booked a ticket (order ${orderNumber || 'DUM-xxxx'})`);
     
     // Track WhatsApp click
-    if (typeof window !== 'undefined' && (window as any).analytics) {
-      (window as any).analytics.trackWhatsAppClick(orderId, 'support');
+    if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
+      const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
+      if (typeof analytics.trackWhatsAppClick === 'function') {
+        (analytics.trackWhatsAppClick as Function)(orderId, 'support');
+      }
     }
     
     window.open(`https://wa.me/${supportNumber}?text=${message}`, '_blank');

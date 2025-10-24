@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
@@ -18,23 +18,23 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
   useEffect(() => {
     // Initialize session
     initializeSession();
-  }, []);
+  }, [initializeSession]);
 
   useEffect(() => {
     // Track page view when pathname changes
     if (sessionId && isTracking) {
       trackPageView();
     }
-  }, [pathname, searchParams, sessionId, isTracking]);
+  }, [pathname, searchParams, sessionId, isTracking, trackPageView]);
 
   useEffect(() => {
     // Track checkout events
     if (pathname.includes('/book') && searchParams.get('step') === '4') {
       trackEvent('checkout_start', 'ecommerce', 'checkout', 'booking_review');
     }
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, trackEvent]);
 
-  const initializeSession = async () => {
+  const initializeSession = useCallback(async () => {
     try {
       // Get or create session ID
       let currentSessionId = localStorage.getItem('analytics_session_id');
@@ -75,9 +75,9 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to initialize session:', error);
     }
-  };
+  }, []);
 
-  const trackSession = async (data: any) => {
+  const trackSession = async (data: Record<string, unknown>) => {
     try {
       await fetch('/api/analytics/track', {
         method: 'POST',
@@ -94,7 +94,7 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     }
   };
 
-  const trackPageView = async () => {
+  const trackPageView = useCallback(async () => {
     try {
       const pagePath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : '');
       
@@ -116,9 +116,9 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to track page view:', error);
     }
-  };
+  }, [sessionId, pathname, searchParams]);
 
-  const trackEvent = async (eventType: string, category?: string, action?: string, label?: string, value?: number) => {
+  const trackEvent = useCallback(async (eventType: string, category?: string, action?: string, label?: string, value?: number) => {
     try {
       await fetch('/api/analytics/track', {
         method: 'POST',
@@ -140,9 +140,9 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to track event:', error);
     }
-  };
+  }, [sessionId]);
 
-  const trackConversion = async (funnelStep: string, stepOrder: number, provider?: string, amount?: number, success?: boolean, orderId?: string) => {
+  const trackConversion = useCallback(async (funnelStep: string, stepOrder: number, provider?: string, amount?: number, success?: boolean, orderId?: string) => {
     try {
       await fetch('/api/analytics/track', {
         method: 'POST',
@@ -165,9 +165,9 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to track conversion:', error);
     }
-  };
+  }, [sessionId]);
 
-  const trackWhatsAppClick = async (orderId?: string, messageType?: string) => {
+  const trackWhatsAppClick = useCallback(async (orderId?: string, messageType?: string) => {
     try {
       await fetch('/api/analytics/track', {
         method: 'POST',
@@ -187,18 +187,18 @@ export function AnalyticsTracker({ children }: AnalyticsTrackerProps) {
     } catch (error) {
       console.error('Analytics: Failed to track WhatsApp click:', error);
     }
-  };
+  }, [sessionId]);
 
   // Expose tracking functions to window for global access
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).analytics = {
+      (window as Record<string, unknown>).analytics = {
         trackEvent,
         trackConversion,
         trackWhatsAppClick,
       };
     }
-  }, [sessionId]);
+  }, [sessionId, trackEvent, trackConversion, trackWhatsAppClick]);
 
   // Cleanup on unmount
   useEffect(() => {

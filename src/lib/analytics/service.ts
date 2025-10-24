@@ -34,7 +34,7 @@ export interface EventData {
   eventAction?: string;
   eventLabel?: string;
   eventValue?: number;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface ConversionData {

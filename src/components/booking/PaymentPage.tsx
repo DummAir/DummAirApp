@@ -50,8 +50,11 @@ export default function PaymentPage() {
       console.log('📧 User Email:', sessionData?.user?.email);
 
       // Track payment attempt
-      if (typeof window !== 'undefined' && (window as any).analytics) {
-        (window as any).analytics.trackConversion('payment_attempt', 3, selectedProvider, totalAmount, false);
+      if (typeof window !== 'undefined' && (window as Record<string, unknown>).analytics) {
+        const analytics = (window as Record<string, unknown>).analytics as Record<string, unknown>;
+        if (typeof analytics.trackConversion === 'function') {
+          (analytics.trackConversion as Function)('payment_attempt', 3, selectedProvider, totalAmount, false);
+        }
       }
       
       const orderResponse = await fetch('/api/orders', {

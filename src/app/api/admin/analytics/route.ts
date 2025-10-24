@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get revenue data
-    const { data: revenueData, error: revenueError } = await supabase
+    const { data: revenueData } = await supabase
       .from('analytics_revenue')
       .select('*')
       .eq('period_type', period)
@@ -51,35 +51,35 @@ export async function GET(request: NextRequest) {
       .order('date', { ascending: true });
 
     // Get session analytics
-    const { data: sessionData, error: sessionError } = await supabase
+    const { data: sessionData } = await supabase
       .from('analytics_sessions')
       .select('*')
       .gte('started_at', start)
       .lte('started_at', end);
 
     // Get page view analytics
-    const { data: pageViewData, error: pageViewError } = await supabase
+    const { data: pageViewData } = await supabase
       .from('analytics_pageviews')
       .select('*')
       .gte('timestamp', start)
       .lte('timestamp', end);
 
     // Get conversion funnel data
-    const { data: conversionData, error: conversionError } = await supabase
+    const { data: conversionData } = await supabase
       .from('analytics_conversions')
       .select('*')
       .gte('timestamp', start)
       .lte('timestamp', end);
 
     // Get orders data
-    const { data: ordersData, error: ordersError } = await supabase
+    const { data: ordersData } = await supabase
       .from('orders')
       .select('*')
       .gte('created_at', start)
       .lte('created_at', end);
 
     // Get WhatsApp events
-    const { data: whatsappEvents, error: whatsappEventsError } = await supabase
+    const { data: whatsappEvents } = await supabase
       .from('analytics_whatsapp_events')
       .select('*')
       .gte('timestamp', start)
