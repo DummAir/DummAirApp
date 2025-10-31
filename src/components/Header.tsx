@@ -49,6 +49,12 @@ export default function Header() {
               FAQ
             </Link>
             <Link
+              href="/blog"
+              className="text-[#647287] hover:text-[#2472e0] font-medium transition-colors"
+            >
+              Blog
+            </Link>
+            <Link
               href="/book"
               className="px-6 py-2.5 bg-[#2472e0] text-white rounded-lg font-semibold hover:bg-[#1e5bb8] transition-all hover:shadow-lg hover:scale-105"
             >
@@ -97,6 +103,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 FAQ
+              </Link>
+              <Link
+                href="/blog"
+                className="px-4 py-2 text-[#647287] hover:text-[#2472e0] hover:bg-[#f0f2f4] rounded-lg font-medium transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
               </Link>
               <Link
                 href="/book"

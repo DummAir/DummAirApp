@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import { Suspense } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({ 
+  subsets: ["latin"], 
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-poppins" 
+});
 
 export const metadata: Metadata = {
   title: "DummAir - Verifiable Dummy Flight Tickets",
@@ -55,7 +60,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/DummAir Logo Design.png" type="image/png" />
         <link rel="apple-touch-icon" href="/DummAir Logo Design.png" />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${poppins.variable} font-sans`}>
         <Suspense fallback={<div></div>}>
           <AnalyticsTracker>
             {children}
