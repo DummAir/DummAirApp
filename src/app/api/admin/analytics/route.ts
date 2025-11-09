@@ -86,9 +86,12 @@ export async function GET(request: NextRequest) {
       .lte('timestamp', end);
 
     // Calculate metrics
+    const relevantOrders = (ordersData || []).filter(order => order.status !== 'pending_payment');
     const totalRevenue = revenueData?.reduce((sum, item) => sum + Number(item.total_revenue), 0) || 0;
-    const totalOrders = ordersData?.length || 0;
-    const successfulOrders = ordersData?.filter(order => order.status === 'paid').length || 0;
+    const totalOrders = relevantOrders.length;
+    const successfulOrders = relevantOrders.filter(order =>
+      ['paid', 'processing', 'completed'].includes(order.status)
+    ).length || 0;
     const conversionRate = totalOrders > 0 ? (successfulOrders / totalOrders) * 100 : 0;
     const averageOrderValue = successfulOrders > 0 ? totalRevenue / successfulOrders : 0;
 
@@ -130,17 +133,25 @@ export async function GET(request: NextRequest) {
     });
 
     // Revenue by provider
-    const stripeRevenue = ordersData?.filter(order => order.payment_provider === 'stripe' && order.status === 'paid')
+    const stripeRevenue = relevantOrders
+      .filter(order =>
+        order.payment_provider === 'stripe' &&
+        ['paid', 'processing', 'completed'].includes(order.status)
+      )
       .reduce((sum, order) => sum + Number(order.payment_amount), 0) || 0;
-    const flutterwaveRevenue = ordersData?.filter(order => order.payment_provider === 'flutterwave' && order.status === 'paid')
+    const flutterwaveRevenue = relevantOrders
+      .filter(order =>
+        order.payment_provider === 'flutterwave' &&
+        ['paid', 'processing', 'completed'].includes(order.status)
+      )
       .reduce((sum, order) => sum + Number(order.payment_amount), 0) || 0;
 
     // WhatsApp metrics
     const whatsappClicks = whatsappEvents?.filter(event => event.event_type === 'click').length || 0;
 
     // Refunds
-    const refunds = ordersData?.filter(order => order.status === 'refunded').length || 0;
-    const refundAmount = ordersData?.filter(order => order.status === 'refunded')
+    const refunds = relevantOrders?.filter(order => order.status === 'refunded').length || 0;
+    const refundAmount = relevantOrders?.filter(order => order.status === 'refunded')
       .reduce((sum, order) => sum + Number(order.payment_amount), 0) || 0;
 
     return NextResponse.json({
