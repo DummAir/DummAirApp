@@ -411,6 +411,55 @@ export function getPaymentReminderEmail(order: OrderDetails, paymentUrl: string)
 }
 
 /**
+ * 6. Post-Payment Survey Email
+ */
+export function getPostPaymentSurveyEmail(order: OrderDetails, surveyUrl: string): string {
+  const content = `
+    <div style="text-align: center; margin-bottom: 30px;">
+      <div style="display: inline-block; background-color: #f59e0b; color: white; padding: 12px 24px; border-radius: 50px; font-weight: 600; font-size: 16px;">
+        ⭐ We Value Your Feedback
+      </div>
+    </div>
+
+    <h2 style="color: #111827; margin: 0 0 20px 0; font-size: 24px;">Tell Us About Your Experience</h2>
+
+    <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px; font-size: 16px;">
+      Thanks again for choosing DummAir for order <strong>${order.orderNumber}</strong>.
+      It only takes a minute to complete our quick survey, and your feedback helps us keep improving.
+    </p>
+
+    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 18px; margin-bottom: 25px;">
+      <table width="100%" cellpadding="6" cellspacing="0" style="font-size: 14px;">
+        <tr>
+          <td style="color: #6b7280;">Route:</td>
+          <td style="color: #111827; font-weight: 600; text-align: right;">${order.flightFrom} → ${order.flightTo}</td>
+        </tr>
+        <tr>
+          <td style="color: #6b7280;">Travelers:</td>
+          <td style="color: #111827; font-weight: 600; text-align: right;">${order.numberOfTravelers}</td>
+        </tr>
+        <tr>
+          <td style="color: #6b7280;">Amount Paid:</td>
+          <td style="color: #10b981; font-weight: 700; text-align: right;">$${order.amount}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${surveyUrl}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+        Share Your Feedback
+      </a>
+    </div>
+
+    <p style="color: #6b7280; line-height: 1.6; margin: 0 0 10px 0; font-size: 14px;">
+      We read every response and use it to make DummAir better for travelers like you. Thank you for helping us improve!
+    </p>
+  `;
+
+  return getBaseTemplate(content);
+}
+
+/**
  * 6. Email Verification Email
  */
 export function getEmailVerificationEmail(verificationUrl: string, userName: string): string {
